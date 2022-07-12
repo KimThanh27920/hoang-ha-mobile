@@ -1,3 +1,6 @@
 # hoang-ha-mobile
 Group Project 
-This is my push
+
+create enviroment env for project
+run enviroment
+after That run comment: pip install -r .\requirements.txt
