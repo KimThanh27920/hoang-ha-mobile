@@ -5,4 +5,4 @@ Group Project
 
 create enviroment env for project
 run enviroment
-after That run comment: pip install -r .\requirements.txt
+after That run command line in this env: pip install -r .\requirements.txt
