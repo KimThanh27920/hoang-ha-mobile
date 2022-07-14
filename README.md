@@ -11,7 +11,7 @@
 ### use to by----- from dotenv import load_dotenv
 ### load_dotenv()  # take environment variables from .env.
 ### file .env:
-###### DB_USER=
-###### DB_PASSWORD=
-###### DB_PORT=
-###### DB_HOST=
+        DB_USER=
+        DB_PASSWORD=
+        DB_PORT=
+        DB_HOST=
