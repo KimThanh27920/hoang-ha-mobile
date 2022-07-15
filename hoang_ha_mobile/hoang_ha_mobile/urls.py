@@ -14,8 +14,44 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('admin/accounts/', include('accounts.administrator.urls')),
+    path('customer/accounts/', include('accounts.customer.urls')),
+    path('accounts/', include('accounts.guest.urls')),
+
+    path('admin/articles/', include('articles.administrator.urls')),
+    path('customer/articles/', include('articles.customer.urls')),
+    path('articles/', include('articles.guest.urls')),
+
+    path('admin/carts/', include('carts.administrator.urls')),
+    path('customer/carts/', include('carts.customer.urls')),
+    path('carts/', include('carts.guest.urls')),
+
+    path('admin/categories/', include('categories.administrator.urls')),
+    path('customer/categories/', include('categories.customer.urls')),
+    path('categories/', include('categories.guest.urls')),
+
+    path('admin/orders/', include('orders.administrator.urls')),
+    path('customer/orders/', include('orders.customer.urls')),
+    path('orders/', include('orders.guest.urls')),
+
+    path('admin/products/', include('products.administrator.urls')),
+    path('customer/products/', include('products.customer.urls')),
+    path('products/', include('products.guest.urls')),
+
+    path('admin/tags/', include('tags.administrator.urls')),
+    path('customer/tags/', include('tags.customer.urls')),
+    path('tags/', include('tags.guest.urls')),
+
+    path('admin/variants/', include('variants.administrator.urls')),
+    path('customer/variants/', include('variants.customer.urls')),
+    path('variants/', include('variants.guest.urls')),
+
+    path('admin/comments/', include('comments.administrator.urls')),
+    path('customer/comments/', include('comments.customer.urls')),
+    path('comments/', include('comments.guest.urls')),
 ]
