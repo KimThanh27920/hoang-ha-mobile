@@ -12,6 +12,8 @@ class Tag(models.Model):
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_tag", null=True)
 
+    class Meta: 
+        db_table = 'tag'
     def __str__(self):
         return self.name
     
@@ -30,5 +32,7 @@ class Article(models.Model):
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_article", null=True)
     
+    class Meta: 
+        db_table = 'articles'
     def __str__(self):
         return self.title
