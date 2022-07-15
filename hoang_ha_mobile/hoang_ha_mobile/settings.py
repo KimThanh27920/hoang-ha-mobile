@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'comments',
     'orders',
     'products',
-    'tags',
     'variants'
 ]
 
