@@ -15,3 +15,6 @@ class Comment(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_update_comment", null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_comment", null=True)
+
+    class Meta:
+        db_table = 'comments'

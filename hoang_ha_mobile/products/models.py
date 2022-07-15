@@ -16,3 +16,6 @@ class Product(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,related_name="user_update_product", null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_product", null=True)
+
+    class Meta:
+        db_table = 'products' 
