@@ -1,3 +1,5 @@
+
+from tkinter import CASCADE
 from django.db import models
 from django.apps import apps
 from django.contrib.auth.models import  AbstractUser
@@ -20,6 +22,19 @@ class CustomUser(AbstractUser):
    
     REQUIRED_FIELDS = ["email","phone"]
 
-
+    class Meta:
+        db_table = 'users'
     def __str__(self):
         return self.full_name
+
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    ward = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    province = models.CharField(max_length=255)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+   
+    class Meta:
+        db_table = 'address'
+    def __str__(self):
+        return self.street
