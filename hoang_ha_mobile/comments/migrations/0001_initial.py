@@ -10,8 +10,13 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+<<<<<<< HEAD
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('products', '0001_initial'),
+=======
+        ('products', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+>>>>>>> 3d1a23ddec080d8c451019fa7ef30f7fc491c510
     ]
 
     operations = [

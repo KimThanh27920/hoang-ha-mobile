@@ -33,3 +33,6 @@ class Variant(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,related_name="user_update_variant", null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_variant", null=True)
+
+    class Meta:
+        db_table ='variant'
