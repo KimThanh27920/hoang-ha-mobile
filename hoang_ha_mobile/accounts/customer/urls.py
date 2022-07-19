@@ -6,5 +6,5 @@ urlpatterns = [
     path('profile/change_password/', views.ChangePasswordView.as_view(), name='change_password'),
     path('profile/addresses/', views.AddressListCreateAPIView.as_view(), name='create_addrress_list'),
     path('profile/addresses/<int:address_id>', views.AddressListCreateAPIView.as_view(), name='update_retrieve_destroy_address'),
-    
+    path('profile/', views.ProfileAPIView.as_view(), name='detail-profile'),
 ]
