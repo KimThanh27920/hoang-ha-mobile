@@ -3,6 +3,5 @@ env
 *.pot
 *.pyc
 *__pycache__
-*migrations
 db.sqlite3ss
 hoang_ha_mobile/.env
