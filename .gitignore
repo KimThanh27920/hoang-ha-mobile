@@ -3,5 +3,9 @@ env
 *.pot
 *.pyc
 *__pycache__
+<<<<<<< HEAD
 db.sqlite3
+=======
+db.sqlite3ss
+>>>>>>> 1fe747fbf0eeebe5488d90f1612707a04f04ff01
 hoang_ha_mobile/.env
