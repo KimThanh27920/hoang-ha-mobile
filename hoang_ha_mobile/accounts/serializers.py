@@ -98,3 +98,15 @@ class ProfileSerializer(serializers.ModelSerializer):
             "sex",
             'addresses'
         ]
+
+class PinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Pin
+        fields = ['user', 'pin']
+
+class ChangePasswordWithPinSerializer(serializers.Serializer):
+
+    # model = User
+    email = serializers.EmailField(required=True)
+    pin = serializers.IntegerField(required=True)
+    new_password = serializers.CharField(required=True)
