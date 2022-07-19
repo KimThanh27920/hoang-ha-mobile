@@ -38,3 +38,4 @@ class Address(models.Model):
         db_table = 'address'
     def __str__(self):
         return self.street
+    
