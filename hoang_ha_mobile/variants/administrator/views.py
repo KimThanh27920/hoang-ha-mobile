@@ -24,12 +24,6 @@ class VariantViewSet(viewsets.ModelViewSet):
             return VariantReadSerializer
         return VariantSerializer
     
-    # def get_queryset(self):
-    #     if self.request.method == 'GET':
-    #         if self.kwargs['product_id'] :
-    #             self.queryset = Variant.objects.filter(product=self.kwargs['product_id']).select_related('product')
-    #         return Variant.objects.all().select_related('product')
-    #     return Variant.objects.all()
     def get_queryset(self):
         if self.request.method == 'GET':
            return Variant.objects.all().select_related('product') 
