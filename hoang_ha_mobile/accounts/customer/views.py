@@ -4,12 +4,14 @@ from .. import serializers
 from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt.views import TokenBlacklistView, TokenRefreshView
 from rest_framework_simplejwt import tokens
+from .. import models
+from django.shortcuts import get_object_or_404
 
 class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = serializers.ChangePasswordSerializer
     # model = User
-    permission_classes = [permissions.AllowAny, permissions.IsAuthenticated]
-
+    # permission_classes = [permissions.AllowAny, permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     def get_object(self, queryset=None):
         obj = self.request.user
         return obj
@@ -39,3 +41,26 @@ class ChangePasswordView(generics.UpdateAPIView):
             return response.Response(data=res, status=status.HTTP_200_OK)
 
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AddressListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = serializers.AddressSerializer
+    # queryset = models.Address.objects.all()
+    permission_classes = [permissions.AllowAny]
+    def get_queryset(self):
+        self.queryset = models.Address.objects.filter(user=self.request.user.id)
+        return super().get_queryset()
+    
+    def perform_create(self, serializer):        
+        serializer.save(user=self.request.user.id)
+        
+class AddressRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
+    serializer_class = serializers.AddressSerializer
+    permission_classes = [permissions.AllowAny]
+    lookup_url_kwarg = 'address_id'
+    def get_queryset(self):
+        self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
+        return super().get_queryset()
+        
+# class ProfileDetailAPIView(generics.RetrieveDestroyAPIView):
+    
+    
