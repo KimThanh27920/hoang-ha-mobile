@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from variants.serializers import VariantSerializer,VariantReadSerializer
+from .serializers import VariantSerializer,VariantReadSerializer
 from variants.models import Variant
 
 from django_filters.rest_framework import DjangoFilterBackend
