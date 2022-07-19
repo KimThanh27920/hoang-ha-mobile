@@ -20,9 +20,14 @@ class Order(models.Model):
     deleted_at = models.DateTimeField(blank=True, null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_order", null=True)
 
+    class Meta:
+        db_table = 'orders' 
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_detail")
     variants = models.ManyToManyField(Variant, related_name="order_details")
     price = models.BigIntegerField()
     quantity = models.BigIntegerField()
+
+    class Meta:
+        db_table = 'orders_detail' 
