@@ -21,9 +21,9 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="articles")
-    viewer = models.IntegerField(default=0)
+    viewers = models.IntegerField(default=0)
     status = models.BooleanField(default=False)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(Tag, related_name="articles")
     
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_create_article", null=True)
