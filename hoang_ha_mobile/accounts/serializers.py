@@ -15,7 +15,7 @@ from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
+class UserAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = User 
         fields = [
