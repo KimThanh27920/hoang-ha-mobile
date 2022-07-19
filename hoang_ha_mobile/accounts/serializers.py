@@ -28,6 +28,19 @@ class UserAdminSerializer(serializers.ModelSerializer):
             "block_by"
         ]
 
+class RegisterSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = [
+            "username",
+            "full_name",
+            "phone",
+            "email",
+            "birthday",
+            "sex",
+            "password"
+
+        ]
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
@@ -68,3 +81,17 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Address
         fields = ["street", "ward", "district", "province"]
+
+class ProfileSerializer(serializers.ModelSerializer):
+    addresses = AddressSerializer(many=True)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "full_name",
+            "phone",
+            "email",
+            "birthday",
+            "sex",
+            'addresses'
+        ]
