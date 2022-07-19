@@ -1,8 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from dataclasses import field, fields
-from importlib.metadata import requires
-from pyexpat import model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.conf import settings
@@ -12,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
-
+from . import models
 User = get_user_model()
 
 class UserAdminSerializer(serializers.ModelSerializer):
@@ -66,3 +63,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
             'new_password': {'write_only':True},
         }
 
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Address
+        fields = ["street", "ward", "district", "province"]
