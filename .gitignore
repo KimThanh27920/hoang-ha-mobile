@@ -3,7 +3,7 @@ env
 *.pot
 *.pyc
 *__pycache__
-hoang_ha_mobile/__pycache__
+hoang_ha_mobile/hoang_ha_mobile/__pycache__
 db.sqlite3
 hoang_ha_mobile/.env
-hoang_ha_mobile/*/migrations
+hoang_ha_mobile/**/migrations
