@@ -6,3 +6,11 @@ env
 hoang_ha_mobile/hoang_ha_mobile/__pycache__
 db.sqlite3
 hoang_ha_mobile/.env
+hoang_ha_mobile/accounts/migrations/*.py
+hoang_ha_mobile/articles/migrations/*.py
+hoang_ha_mobile/carts/migrations/*.py
+hoang_ha_mobile/categories/migrations/*.py
+hoang_ha_mobile/comments/migrations/*.py
+hoang_ha_mobile/orders/migrations/*.py
+hoang_ha_mobile/products/migrations/*.py
+hoang_ha_mobile/variants/migrations/*.py
