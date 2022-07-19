@@ -32,7 +32,7 @@ class Address(models.Model):
     ward = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="addresses")
    
     class Meta:
         db_table = 'address'
