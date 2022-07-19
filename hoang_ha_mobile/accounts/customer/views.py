@@ -55,7 +55,7 @@ class AddressListCreateAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):        
         serializer.save(user=self.request.user)
         
-class AddressRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
+class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.AddressSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
