@@ -3,6 +3,14 @@ env
 *.pot
 *.pyc
 *__pycache__
-hoang_ha_mobile/__pycache__
+hoang_ha_mobile/hoang_ha_mobile/__pycache__
 db.sqlite3
 hoang_ha_mobile/.env
+hoang_ha_mobile/accounts/migrations
+hoang_ha_mobile/articles/migrations
+hoang_ha_mobile/carts/migrations
+hoang_ha_mobile/categories/migrations
+hoang_ha_mobile/comments/migrations
+hoang_ha_mobile/orders/migrations
+hoang_ha_mobile/products/migrations
+hoang_ha_mobile/variants/migrations
