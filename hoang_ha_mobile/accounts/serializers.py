@@ -39,8 +39,11 @@ class RegisterSerialize(serializers.ModelSerializer):
             "birthday",
             "sex",
             "password"
-
         ]
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
