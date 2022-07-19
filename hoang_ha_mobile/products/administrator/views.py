@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.response import Response
 from products.serializers import ProductSerializer
 from products.models import Product
 
@@ -10,12 +10,27 @@ from datetime import datetime
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAdminUser]
-    
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminUser]
+
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+        serializer.save(updated_by=self.request.user)
     
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
@@ -25,7 +40,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             "deleted_by": self.request.user.id,
             "deleted_at": datetime.now()
         }
-        serializer = ProductSerializer(instance=instance, data=data)
+        serializer = ProductSerializer(instance=instance, data=data,partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

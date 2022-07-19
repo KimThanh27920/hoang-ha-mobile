@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from categories.models import Category
 
@@ -10,6 +11,7 @@ class Product(models.Model):
     description = models.TextField(null=True)
     insurance = models.IntegerField(null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
+    status = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,related_name="user_create_product", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

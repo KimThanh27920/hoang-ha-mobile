@@ -46,9 +46,9 @@ class CustomUser(AbstractUser):
     birthday = models.DateField(blank=True,null=True)
     sex = models.CharField(max_length=4)
     updated_at = models.DateTimeField(auto_now=True)
-    block_at = models.DateTimeField(blank=True,null=True)
-    updated_by = models.CharField(max_length=255)
-    block_by = models.CharField(max_length=255,null=True)
+    block_at = models.DateTimeField(blank=True, null=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+    block_by = models.CharField(max_length=255, blank=True, null=True)
    
     objects = UserManager()
     REQUIRED_FIELDS = ["email","phone"]
@@ -69,3 +69,7 @@ class Address(models.Model):
         db_table = 'address'
     def __str__(self):
         return self.street
+
+class Pin(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    pin = models.IntegerField()
