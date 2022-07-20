@@ -1,5 +1,5 @@
 from itertools import product
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
@@ -9,6 +9,7 @@ from orders.models import Order, OrderDetail
 
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
@@ -53,13 +54,13 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 class OrderDetailViewSet(viewsets.ModelViewSet):
     serializer_class = OrderDetailSerializer
-    queryset = OrderDetail.objects.all()
+    queryset = OrderDetail.objects.all().select_related('order','variant')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     #search_fields = ['product__id']
-    filterset_fields = ['order','variant']
+    filterset_fields = ['order','variant','order__name']
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -96,3 +97,4 @@ class OrderDetailViewSet(viewsets.ModelViewSet):
         serializer = OrderDetailSerializer(instance=instance, data=data,partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
