@@ -14,7 +14,7 @@ class Order(models.Model):
     status = models.CharField(default="Chờ xác nhận", max_length=255)
     total = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_order", null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, related_name="user_create_order", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_update_order", null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
