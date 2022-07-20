@@ -1,6 +1,4 @@
-from pytz import timezone
-from rest_framework import viewsets,status,permissions
-from rest_framework.response import Response
+from rest_framework import filters,viewsets,permissions
 from categories.administrator.serializers import CategorySerializer
 from categories.models import Category
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -11,6 +9,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
