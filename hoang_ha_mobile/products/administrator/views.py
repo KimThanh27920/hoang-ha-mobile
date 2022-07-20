@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from products.serializers import ProductSerializer
+from .serializers import ProductSerializer
 from products.models import Product
 
 from datetime import datetime
