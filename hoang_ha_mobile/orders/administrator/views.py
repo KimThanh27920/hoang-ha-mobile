@@ -54,7 +54,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 class OrderDetailViewSet(viewsets.ModelViewSet):
     serializer_class = OrderDetailSerializer
-    queryset = OrderDetail.objects.all().select_related('orders')
+    queryset = OrderDetail.objects.all().select_related('order','variant')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
