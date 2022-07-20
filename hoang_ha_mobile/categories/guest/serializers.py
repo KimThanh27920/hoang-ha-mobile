@@ -11,3 +11,9 @@ class ReadCategorySerializer(serializers.ModelSerializer):
             "name",
             "status"
         ]
+
+        read_only_fields = [
+            "id",
+            "name",
+            "status"
+        ]
