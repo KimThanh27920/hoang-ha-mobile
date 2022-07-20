@@ -36,3 +36,6 @@ class Variant(models.Model):
 
     class Meta:
         db_table ='variant'
+
+    def __str__(self) :
+        return self.product.name + " + " + str(self.price) +" VND"
