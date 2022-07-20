@@ -1,7 +1,7 @@
 from urllib import request
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from .. import serializers
+from . import serializers
 from rest_framework import generics, permissions, response, status
 from .. import models
 from django.shortcuts import get_object_or_404
@@ -20,7 +20,7 @@ class CommentListProduct(generics.ListAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     def get_queryset(self):
-        self.queryset = models.Comment.objects.filter(phone = self.request.user.phone, product = self.kwargs['product_id'])
+        self.queryset = models.Comment.objects.filter(phone = self.request.user.phone, product = self.kwargs['product_id']).select_related()
         # self.queryset = listObject.objects.filter()
         return super().get_queryset()
 

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from .. import serializers
+from . import serializers
 from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt.views import TokenBlacklistView, TokenRefreshView
 from rest_framework_simplejwt import tokens, authentication
@@ -12,7 +12,6 @@ class ChangePasswordView(generics.UpdateAPIView):
     # model = User
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.AllowAny, permissions.IsAuthenticated]
-    # permission_classes = [permissions.AllowAny]
     def get_object(self, queryset=None):
         obj = self.request.user
         return obj
@@ -38,7 +37,6 @@ class ChangePasswordView(generics.UpdateAPIView):
                     'refresh': str(refresh),
                 }
             }
-
             return response.Response(data=res, status=status.HTTP_200_OK)
 
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -46,6 +44,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 class AddressListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.AddressSerializer
     # queryset = models.Address.objects.all()
+    pagination_class = None
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     def get_queryset(self):
@@ -59,6 +58,7 @@ class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView)
     serializer_class = serializers.AddressSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    pagination_class = None
     lookup_url_kwarg = 'address_id'
     def get_queryset(self):
         self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
