@@ -14,7 +14,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    order_detail = OrderDetailSerializer(many=True)
+
+    order_details = OrderDetailSerializer(many=True)
 
     class Meta:
         model = Order
@@ -28,5 +29,5 @@ class OrderSerializer(serializers.ModelSerializer):
             'note',
             'status',
             'total',
-            'order_detail'
+            'order_details'
         ]
