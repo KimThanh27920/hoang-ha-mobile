@@ -28,45 +28,8 @@ class UserAdminSerializer(serializers.ModelSerializer):
             "block_by"
         ]
 
-class RegisterSerialize(serializers.ModelSerializer):
-    class Meta:
-        model = User 
-        fields = [
-            "username",
-            "full_name",
-            "phone",
-            "email",
-            "birthday",
-            "sex",
-            "password"
-        ]
 
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        token['email'] = user.email
-        # ...
-
-        return token
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "phone",
-            "email",
-            "birthday",
-            "sex",
-        ]
         
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
@@ -99,14 +62,3 @@ class ProfileSerializer(serializers.ModelSerializer):
             'addresses'
         ]
 
-class PinSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Pin
-        fields = ['user', 'pin']
-
-class ChangePasswordWithPinSerializer(serializers.Serializer):
-
-    # model = User
-    email = serializers.EmailField(required=True)
-    pin = serializers.IntegerField(required=True)
-    new_password = serializers.CharField(required=True)

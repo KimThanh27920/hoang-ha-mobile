@@ -14,7 +14,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt import tokens
-from ..serializers import AddressSerializer, MyTokenObtainPairSerializer, RegisterSerialize, PinSerializer, ChangePasswordWithPinSerializer
+from .serializers import AddressSerializer, MyTokenObtainPairSerializer, RegisterSerializer, PinSerializer, ChangePasswordWithPinSerializer
 from ..models import Pin
 from django.contrib.auth import get_user_model
 
@@ -25,7 +25,7 @@ class LoginApiView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 class RegisterApiView(generics.CreateAPIView):
-    serializer_class = RegisterSerialize
+    serializer_class = RegisterSerializer
     queryset = User.objects.all()
     
     def perform_create(self, serializer):
@@ -76,20 +76,20 @@ class ForgotPasswordApiView(APIView):
         try:
             user = User.objects.get(email=request.data["email"])
         except:
-            return Response({"message": "Nè email " + request.data['email'] + " này có đăng ký đâu mà lấy lại mật khẩu?"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Nè! Email " + request.data['email'] + " này có đăng ký đâu mà lấy lại mật khẩu?"}, status=status.HTTP_404_NOT_FOUND)
         
         pin_code = self.create_pin(user)
         print(pin_code)
 
         html_content = render_to_string("index.html", {'fullname': user.full_name, 'pin': pin_code})
         send_mail(
-            subject='Task Manager System - Forgot Password',
+            subject='E-Commerce - Forgot Password',
             message='Mật khẩu mới nè cha nội',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[request.data["email"]],
             html_message=html_content
         )
-        return Response({"message": "Nè " + user.email + " có cái mật khẩu cũng không nhớ gửi qua email mật khẩu mới rồi đó."})
+        return Response({"message": "Nè! " + user.email + " có cái mật khẩu cũng không nhớ gửi qua email mật khẩu mới rồi đó."})
 
 class ChangePasswordWithPINApiView(APIView):
     

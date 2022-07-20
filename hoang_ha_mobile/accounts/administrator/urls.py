@@ -3,5 +3,4 @@ from .views import UserListView
 
 urlpatterns = [
     path('users/', UserListView.as_view()),
-    
 ]
