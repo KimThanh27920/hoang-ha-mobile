@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductVariantSerializer
 from products.models import Product
 
 from datetime import datetime
@@ -12,6 +12,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ProductVariantSerializer
+        return ProductSerializer
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
