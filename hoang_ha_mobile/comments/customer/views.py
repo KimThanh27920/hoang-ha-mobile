@@ -1,7 +1,7 @@
 from urllib import request
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from .. import serializers
+from . import serializers
 from rest_framework import generics, permissions, response, status
 from .. import models
 from django.shortcuts import get_object_or_404
