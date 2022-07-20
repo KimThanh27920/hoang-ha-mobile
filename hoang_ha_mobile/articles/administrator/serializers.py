@@ -45,12 +45,8 @@ class ArticleRetrieveSerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    author_id = serializers.PrimaryKeyRelatedField(
-        queryset = User.objects.all(), source = "author", write_only=True
-    )
     updated_by = UserSerializer(read_only=True)
     deleted_by = UserSerializer(read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
     tag_ids = serializers.PrimaryKeyRelatedField(
         queryset = Tag.objects.all(), many=True, source = "tags", write_only=True
     )
@@ -61,9 +57,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "author",
-            "author_id",
             "viewers",
-            "tags",
             "tag_ids",
             "status",
             "created_at",
