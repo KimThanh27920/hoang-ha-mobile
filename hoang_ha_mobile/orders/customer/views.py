@@ -2,9 +2,21 @@ from . import serializers
 from rest_framework import generics, permissions, response, status
 from .. import models
 from variants.models import Variant
+from rest_framework_simplejwt import authentication
 
-class CreateOrderAPIView(generics.CreateAPIView):
+class CreateOrderAPIView(generics.ListCreateAPIView):
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.OrderSerializer
+    
+    def get_queryset(self):        
+        self.queryset = models.Order.objects.filter(created_by=self.request.user.id)
+        return super().get_queryset()
+        
+    
     def get_serializer(self, *args, **kwargs):
+        if(self.request.method == "GET"):
+            return super().get_serializer(*args, **kwargs)
         return serializers.OrderSerializer(*args, **kwargs)
    
     
@@ -12,7 +24,7 @@ class CreateOrderAPIView(generics.CreateAPIView):
         serializer = serializers.OrderSerializer(data=request.data.get('order'))
             
         if(serializer.is_valid()):
-            self.instance = serializer.save(created_by=self.request.user.id)
+            self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
             # print(self.instance.id)
             dt = self.request.data.get("order_detail")
@@ -29,8 +41,16 @@ class CreateOrderAPIView(generics.CreateAPIView):
                 if(serializer.is_valid()):
                     serializer.save()
             self.instance.total = instance_price
+            self.instance.save()
             print(self.instance)
             serializer = self.get_serializer(self.instance)
             return response.Response(data=serializer.data)
         else:
             return response.Response(serializer.errors)
+
+
+# class ListOrderOwner(generics.ListAPIView):
+#     serializer_class = serializers.OrderSerializer
+#     def get_queryset(self):
+#         self.queryset = models.Order.objects.filter(created_by = self.request.user.id)
+#         return super().get_queryset()
