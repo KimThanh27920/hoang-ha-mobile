@@ -43,7 +43,9 @@ urlpatterns = [
     path('customer/products/', include('products.customer.urls')),
     path('products/', include('products.guest.urls')),
 
-   
+    path('admin/tags/', include('tags.administrator.urls')),
+    # path('customer/tags/', include('tags.customer.urls')),
+    # path('tags/', include('tags.guest.urls')),
 
     path('admin/variants/', include('variants.administrator.urls')),
     path('customer/variants/', include('variants.customer.urls')),

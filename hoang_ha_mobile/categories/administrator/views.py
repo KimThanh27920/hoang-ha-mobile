@@ -13,8 +13,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-        serializer.save(updated_by=self.request.user)
+        serializer.save(updated_by=self.request.user,created_by=self.request.user)
     
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
