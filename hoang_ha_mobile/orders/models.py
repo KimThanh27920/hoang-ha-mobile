@@ -25,9 +25,16 @@ class Order(models.Model):
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_detail")
-    variants = models.ManyToManyField(Variant, related_name="order_details")
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE,related_name="order_details")
     price = models.BigIntegerField()
     quantity = models.BigIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_order_detail", null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_update_order_detail", null=True)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_order_detail", null=True)
+
 
     class Meta:
         db_table = 'orders_detail' 
