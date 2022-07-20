@@ -24,8 +24,8 @@ class Order(models.Model):
         db_table = 'orders' 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_detail")
-    variant = models.ForeignKey(Variant, on_delete=models.CASCADE,related_name="order_details")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_details")
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE,related_name="order_variant_details")
     price = models.BigIntegerField()
     quantity = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True, null=True)

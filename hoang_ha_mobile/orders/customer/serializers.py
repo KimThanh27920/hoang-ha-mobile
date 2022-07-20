@@ -1,7 +1,23 @@
 from .. import models
 from rest_framework import serializers
 
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.OrderDetail
+        fields =[
+            'order',
+            'variant',
+            'price',
+            'quantity',
+        ]
+        extra_kwargs = {
+            'order': {'write_only': True},
+        }
 class OrderSerializer(serializers.ModelSerializer):
+    order_details = OrderDetailSerializer(many = True, read_only=True)
     class Meta:
         model = models.Order
         fields = [
@@ -12,17 +28,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'shipping',
             'delivery_address',
             'note',
-            'status',
             'total',
-        ]
-
-class OrderDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.OrderDetail
-        fields =[
-            'id',
-            'order',
-            'variant',
-            'price',
-            'quantity',
+            'status',
+            'order_details',
         ]
