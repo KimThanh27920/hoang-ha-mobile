@@ -55,7 +55,7 @@ class AddressListCreateAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):        
         serializer.save(user=self.request.user)
         
-class AddressRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
+class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.AddressSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
@@ -64,6 +64,15 @@ class AddressRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
         self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
         return super().get_queryset()
         
-# class ProfileDetailAPIView(generics.RetrieveDestroyAPIView):
-    
-    
+class ProfileAPIView(generics.ListAPIView):
+    serializer_class = serializers.ProfileSerializer
+    # queryset = User.objects.all()
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    pagination_class = None
+    def get_queryset(self):
+        self.queryset = User.objects.filter(id=self.request.user.id).prefetch_related()
+        return super().get_queryset()
+    # def get_serializer(self, *args, **kwargs):
+    #     kwargs['addresses'] = models.Address.objects.filter(user=self.request.user.id)
+    #     return super().get_serializer(*args, **kwargs)

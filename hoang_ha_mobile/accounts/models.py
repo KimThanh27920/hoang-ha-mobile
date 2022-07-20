@@ -5,8 +5,38 @@ from django.apps import apps
 from django.contrib.auth.models import  AbstractUser
 from django.utils.translation import gettext_lazy as _
 import uuid
+from django.contrib.auth.base_user import BaseUserManager
 # Create your models here.
 #custom user model
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('Users require an email field')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        print(user.set_password(password))
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
@@ -16,10 +46,11 @@ class CustomUser(AbstractUser):
     birthday = models.DateField(blank=True,null=True)
     sex = models.CharField(max_length=4)
     updated_at = models.DateTimeField(auto_now=True)
-    block_at = models.DateTimeField(blank=True,null=True)
-    updated_by = models.CharField(max_length=255)
-    block_by = models.CharField(max_length=255,null=True)
+    block_at = models.DateTimeField(blank=True, null=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+    block_by = models.CharField(max_length=255, blank=True, null=True)
    
+    objects = UserManager()
     REQUIRED_FIELDS = ["email","phone"]
 
     class Meta:
@@ -32,9 +63,13 @@ class Address(models.Model):
     ward = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="addresses")
    
     class Meta:
         db_table = 'address'
     def __str__(self):
         return self.street
+
+class Pin(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    pin = models.IntegerField()

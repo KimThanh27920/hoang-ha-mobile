@@ -39,8 +39,11 @@ class RegisterSerialize(serializers.ModelSerializer):
             "birthday",
             "sex",
             "password"
-
         ]
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     
@@ -71,3 +74,29 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Address
         fields = ["street", "ward", "district", "province"]
+
+class ProfileSerializer(serializers.ModelSerializer):
+    addresses = AddressSerializer(many=True)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "full_name",
+            "phone",
+            "email",
+            "birthday",
+            "sex",
+            'addresses'
+        ]
+
+class PinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Pin
+        fields = ['user', 'pin']
+
+class ChangePasswordWithPinSerializer(serializers.Serializer):
+
+    # model = User
+    email = serializers.EmailField(required=True)
+    pin = serializers.IntegerField(required=True)
+    new_password = serializers.CharField(required=True)
