@@ -14,7 +14,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt import tokens
-from ..serializers import AddressSerializer, MyTokenObtainPairSerializer, RegisterSerialize, PinSerializer, ChangePasswordWithPinSerializer
+from .serializers import AddressSerializer, MyTokenObtainPairSerializer, RegisterSerialize, PinSerializer, ChangePasswordWithPinSerializer
 from ..models import Pin
 from django.contrib.auth import get_user_model
 
