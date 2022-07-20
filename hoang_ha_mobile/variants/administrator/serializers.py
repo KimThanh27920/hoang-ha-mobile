@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAdminUser
 
 from variants.models import Variant
-from products.serializers import ProductSerializer
+from products.administrator.serializers import ProductSerializer
 
 class VariantSerializer(serializers.ModelSerializer):
     class Meta:

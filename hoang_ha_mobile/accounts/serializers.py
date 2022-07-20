@@ -56,17 +56,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "phone",
-            "email",
-            "birthday",
-            "sex",
-        ]
+
         
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
