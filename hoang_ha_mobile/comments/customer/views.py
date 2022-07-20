@@ -20,7 +20,7 @@ class CommentListProduct(generics.ListAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
     def get_queryset(self):
-        self.queryset = models.Comment.objects.filter(phone = self.request.user.phone, product = self.kwargs['product_id'])
+        self.queryset = models.Comment.objects.filter(phone = self.request.user.phone, product = self.kwargs['product_id']).select_related()
         # self.queryset = listObject.objects.filter()
         return super().get_queryset()
 

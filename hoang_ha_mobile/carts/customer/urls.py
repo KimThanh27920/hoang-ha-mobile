@@ -2,5 +2,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.CartOwnerAPIView.as_view(), name="list-item"),
+    path('', views.CartOwnerCreateOrUpdateAPIView.as_view(), name="add_and_list_item"),
+    path('<int:cart_id>/', views.CartOwnerUpdateOrDeleteAPIView.as_view(), name="delete_and_update_item"),
 ]

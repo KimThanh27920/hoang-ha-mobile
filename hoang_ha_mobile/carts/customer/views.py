@@ -1,12 +1,12 @@
 from rest_framework import generics, permissions, response
-from .. import serializers
+from . import serializers
 from .. import models
 from rest_framework_simplejwt import authentication
-
-class CartOwnerAPIView(generics.ListCreateAPIView):
+from .permissions import IsOwner
+class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CartSerializer
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
     def get_queryset(self):
         self.queryset = models.Cart.objects.filter(user = self.request.user.id)
         return super().get_queryset() 
@@ -31,3 +31,12 @@ class CartOwnerAPIView(generics.ListCreateAPIView):
             return response.Response(True)
         else:
             return response.Response(serializer.errors)
+        
+class CartOwnerUpdateOrDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.CartUpdateSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_url_kwarg = 'cart_id'
+    def get_queryset(self):
+        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
+        return super().get_queryset()
