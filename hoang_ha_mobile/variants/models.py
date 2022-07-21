@@ -24,7 +24,7 @@ class Variant(models.Model):
     camera = models.CharField(max_length=255, null=True, blank=True)
     pin = models.CharField(max_length=255, null=True, blank=True)
     screen = models.CharField(max_length=255, null=True, blank=True)
-    image = models.ImageField(null=True, update_to="images")
+    image = models.ImageField(null=True, upload_to="images/")
     price = models.BigIntegerField(null=True)
     sale = models.BigIntegerField(null=True)
     status = models.BooleanField(default=False)
