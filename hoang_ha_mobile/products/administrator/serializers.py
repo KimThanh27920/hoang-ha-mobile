@@ -44,6 +44,7 @@ class VariantDetailSerializer(serializers.ModelSerializer):
             'id',
             'color',
             'version',
+            'image',
             'size',
             'strap',
             'general',
