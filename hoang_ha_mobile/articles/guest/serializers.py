@@ -34,6 +34,7 @@ class ReadArticleSerializer(serializers.ModelSerializer):
             "author",
             "viewers",
             "tags",
-            "status",
+            "created_at",
+            "updated_at"
         ]
         depth = 1

@@ -36,3 +36,10 @@ class OrderSerializer(serializers.ModelSerializer):
             'status',
             'order_details',
         ]
+
+class CancelOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [
+            'status'
+        ]

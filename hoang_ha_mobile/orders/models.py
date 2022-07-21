@@ -12,7 +12,7 @@ class Order(models.Model):
     delivery_address = models.CharField(max_length=255)
     note = models.TextField()
     status = models.CharField(default="Chờ xác nhận", max_length=255)
-    total = models.BigIntegerField()
+    total = models.BigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, related_name="user_create_order", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

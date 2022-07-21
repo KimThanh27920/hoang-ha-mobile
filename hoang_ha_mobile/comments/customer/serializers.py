@@ -11,5 +11,18 @@ class CommentSerializer(serializers.ModelSerializer):
             "phone",
             "content",
             "product",
+        ]
+        
+class CommentRatingSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.Comment
+        fields = [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "content",
+            "product",
             "rating",
         ]
