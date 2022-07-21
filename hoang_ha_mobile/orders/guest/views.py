@@ -1,5 +1,6 @@
 from urllib import response
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import generics
 from .serializers import OrderSerializer, OrderDetailSerializer, CancelOrderSerializer
 from ..models import Order, OrderDetail
@@ -12,7 +13,7 @@ class CreateOrderApiView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         self.queryset = Order.objects.filter(
-            phone=self.request.query_params.get('phone'))
+            phone=self.request.query_params.get('phone')).prefetch_related()
         return super().get_queryset()
 
     def get_serializer(self, *args, **kwargs):
@@ -30,18 +31,18 @@ class CreateOrderApiView(generics.ListCreateAPIView):
             order_detail = self.request.data.get("order_details")
             for data in order_detail:
                 variant = Variant.objects.get(id=data.get('variant'))
-                if variant.sale :
+                if variant.sale:
                     price = variant.sale
                     total += int(variant.sale) * int(data.get('quantity'))
                 else:
                     price = variant.price
                     total += int(variant.price) * int(data.get('quantity'))
                 data_save = {
-                        "order": self.instance.id,
-                        "variant": data.get('variant'),
-                        "quantity": data.get('quantity'),
-                        "price": price
-                    }
+                    "order": self.instance.id,
+                    "variant": data.get('variant'),
+                    "quantity": data.get('quantity'),
+                    "price": price
+                }
                 serializer = OrderDetailSerializer(data=data_save)
                 if(serializer.is_valid()):
                     serializer.save()
@@ -63,8 +64,12 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
     #     response = super().update(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        data = Order.objects.get(id=self.kwargs['order_id'])
-        if data.status == "Chờ xác nhận":
-            return super().update(request, *args, **kwargs)
-        else:
-            return Response(data={"message": "Hông cho bé ơi!"})
+        try:
+            data = Order.objects.get(id=self.kwargs['order_id'])
+            if data.status == "Chờ xác nhận":
+                return super().update(request, *args, **kwargs)
+            else:
+                return Response(data={"message": "Hông cho bé ơi!"})
+        except:
+            return Response(data={"detail": "Not Found!"}, status=status.HTTP_404_NOT_FOUND)
+
