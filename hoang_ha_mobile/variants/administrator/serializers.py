@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAdminUser
 
 from variants.models import Variant
-from products.administrator.serializers import ProductSerializer
+from products.models import Product
 
 class VariantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,9 +36,23 @@ class VariantSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
-
+class ProductReadInVariantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields =[
+            'id',
+            'name',
+            'description',
+            'insurance',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'deleted_at',
+            'deleted_by',
+        ]
 class VariantReadSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
+    product = ProductReadInVariantSerializer()
     class Meta:
         model = Variant
         fields = [

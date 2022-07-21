@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .serializers import OrderSerializer, OrderDetailSerializer, OrderDetailReadSerializer
+from .serializers import OrderSerializer, OrderDetailSerializer, OrderDetailReadSerializer, OrderReadSerializer
 from orders.models import Order, OrderDetail
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,7 +13,7 @@ from datetime import datetime
 
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
-    queryset = Order.objects.all()
+    queryset = Order.objects.all() #prefetch_related('orders_detail','variants','products')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
@@ -21,6 +21,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     #search_fields = ['product__id']
     filterset_fields = ['status','created_by']
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return OrderReadSerializer
+        return OrderSerializer
+    
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
         serializer.save(updated_by=self.request.user)
