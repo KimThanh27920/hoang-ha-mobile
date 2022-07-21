@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from . import serializers
@@ -15,11 +16,10 @@ class ChangePasswordView(generics.UpdateAPIView):
     def get_object(self, queryset=None):
         obj = self.request.user
         return obj
-
+    
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
         serializer = self.get_serializer(data=request.data)
-
         if serializer.is_valid():
             # Check old password
             if not self.object.check_password(serializer.data.get("old_password")):
@@ -64,15 +64,30 @@ class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView)
         self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
         return super().get_queryset()
         
-class ProfileAPIView(generics.ListAPIView):
-    serializer_class = serializers.ProfileSerializer
-    # queryset = User.objects.all()
+# class ProfileAPIView(generics.ListAPIView):
+#     serializer_class = serializers.ProfileSerializer
+#     # queryset = User.objects.all()
+#     authentication_classes = [authentication.JWTAuthentication]
+#     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+#     pagination_class = None
+#     def get_queryset(self):
+#         self.queryset = User.objects.filter(id=self.request.user.id).prefetch_related()
+#         return super().get_queryset()
+    
+class ProfileUpdateRetrieveAPIView(generics.RetrieveUpdateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-    pagination_class = None
-    def get_queryset(self):
-        self.queryset = User.objects.filter(id=self.request.user.id).prefetch_related()
-        return super().get_queryset()
-    # def get_serializer(self, *args, **kwargs):
-    #     kwargs['addresses'] = models.Address.objects.filter(user=self.request.user.id)
-    #     return super().get_serializer(*args, **kwargs)
+    def get_serializer_class(self):
+        if(self.request.method == "GET"):
+            self.serializer_class = serializers.ProfileSerializer
+        else:
+            self.serializer_class = serializers.UserSerializer
+            
+        return super().get_serializer_class()
+    
+    def get_object(self, queryset=None):
+        obj = get_object_or_404(User,id=self.request.user.id)
+        return obj    
+    
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user.id)

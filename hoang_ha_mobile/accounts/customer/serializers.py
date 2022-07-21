@@ -8,12 +8,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id",
             "full_name",
             "phone",
             "email",
             "birthday",
-            "sex",
+            "sex"
         ]
         
 class ChangePasswordSerializer(serializers.ModelSerializer):
@@ -30,7 +29,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Address
-        fields = ["street", "ward", "district", "province"]
+        fields = ["id", "street", "ward", "district", "province"]
 
 class ProfileSerializer(serializers.ModelSerializer):
     addresses = AddressSerializer(many=True)

@@ -1,3 +1,4 @@
+from ast import Try
 from . import serializers
 from rest_framework import generics, permissions, response, status
 from .. import models
@@ -13,12 +14,7 @@ class CreateOrderAPIView(generics.ListCreateAPIView):
         self.queryset = models.Order.objects.filter(created_by=self.request.user.id)
         return super().get_queryset()
         
-    
-    def get_serializer(self, *args, **kwargs):
-        if(self.request.method == "GET"):
-            return super().get_serializer(*args, **kwargs)
-        return serializers.OrderSerializer(*args, **kwargs)
-   
+      
     
     def post(self, request, *args, **kwargs):
         serializer = serializers.OrderSerializer(data=request.data.get('order'))
@@ -29,7 +25,10 @@ class CreateOrderAPIView(generics.ListCreateAPIView):
             # print(self.instance.id)
             array_order_detail = self.request.data.get("order_detail")
             for order_detail in array_order_detail:
-                variant = Variant.objects.get(id=order_detail.get('variant'))
+                try:
+                    variant = Variant.objects.get(id=order_detail.get('variant'))
+                except:
+                    return response.Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
                 if(variant.sale > 0):
                     price = variant.sale
                 else:
