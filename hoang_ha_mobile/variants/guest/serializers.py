@@ -1,18 +1,22 @@
+from itertools import product
 from rest_framework import serializers
 from ..models import Variant
 from products.guest.serializers import ReadProductSerializer
 
+class ShortInfoProductSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
 class ReadVarianSerializer(serializers.ModelSerializer):
+    product = ShortInfoProductSerializer()
     class Meta:
         model = Variant
         fields = [
             "id",
+            "product",
             "color",
-            "storage",
+            "version",
             "price",
-            "sale",
-            "status",
-            "product"
+            "sale"
         ]
 
 
@@ -22,6 +26,9 @@ class ReadDetailVarianSerializer(serializers.ModelSerializer):
         model = Variant
         fields = [
             "id",
+            "product",
+            "price",
+            "sale",
             "color",
             "version",
             "size",
@@ -34,9 +41,5 @@ class ReadDetailVarianSerializer(serializers.ModelSerializer):
             "front_cam",
             "camera",
             "pin",
-            "screen",
-            "price",
-            "sale",
-            "status",
-            "product"
+            "screen"
         ]
