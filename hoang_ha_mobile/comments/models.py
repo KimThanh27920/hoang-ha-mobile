@@ -9,7 +9,7 @@ class Comment(models.Model):
     phone = models.CharField(max_length=18)
     content = models.TextField()
     rating = models.IntegerField(default = 0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)  
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_comment", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -19,3 +19,4 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comments'
+        
