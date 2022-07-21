@@ -2,7 +2,6 @@ from .. import models
 from rest_framework import serializers
 
 
-
 class OrderDetailSerializer(serializers.ModelSerializer):
     
     class Meta:

@@ -27,22 +27,26 @@ class CreateOrderAPIView(generics.ListCreateAPIView):
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
             # print(self.instance.id)
-            dt = self.request.data.get("order_detail")
-            for d in dt:
-                variant = Variant.objects.get(id=d.get('variant'))
-                instance_price += int(variant.price) * int(d.get('quantity'))
+            array_order_detail = self.request.data.get("order_detail")
+            for order_detail in array_order_detail:
+                variant = Variant.objects.get(id=order_detail.get('variant'))
+                if(variant.sale > 0):
+                    price = variant.sale
+                else:
+                    price = variant.price
+                instance_price += int(price) * int(order_detail.get('quantity'))
                 data = {
                     "order": self.instance.id,
-                    "variant": d.get('variant'),
-                    "quantity": d.get('quantity'),
-                    "price": variant.price
+                    "variant": order_detail.get('variant'),
+                    "quantity": order_detail.get('quantity'),
+                    "price": price
                 }
                 serializer = serializers.OrderDetailSerializer(data=data)
                 if(serializer.is_valid()):
                     serializer.save()
             self.instance.total = instance_price
             self.instance.save()
-            print(self.instance)
+            # print(self.instance)
             serializer = self.get_serializer(self.instance)
             return response.Response(data=serializer.data)
         else:
