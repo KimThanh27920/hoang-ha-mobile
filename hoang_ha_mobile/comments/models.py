@@ -8,7 +8,7 @@ class Comment(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=18)
     content = models.TextField()
-    rating = models.IntegerField()
+    rating = models.IntegerField(default = 0)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_comment", null=True)
