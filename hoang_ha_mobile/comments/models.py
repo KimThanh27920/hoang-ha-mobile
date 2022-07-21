@@ -10,6 +10,7 @@ class Comment(models.Model):
     content = models.TextField()
     rating = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies", null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_comment", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
