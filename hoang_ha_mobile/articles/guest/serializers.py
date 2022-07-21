@@ -31,6 +31,24 @@ class ReadArticleSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
+            "content",
+            "author",
+            "viewers",
+            "tags",
+            "created_at",
+            "updated_at"
+        ]
+        depth = 1
+
+class ListArticleSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer()
+    tags = TagSerializer(many=True)
+    class Meta:
+        model = Article
+        fields = [
+            "id",
+            "title",
+            "description",
             "author",
             "viewers",
             "tags",
