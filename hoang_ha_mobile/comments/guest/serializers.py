@@ -15,4 +15,5 @@ class CommentSerializer(serializers.ModelSerializer):
             "rating",
             "created_at",
             "product",
+            "parent"
         ]
