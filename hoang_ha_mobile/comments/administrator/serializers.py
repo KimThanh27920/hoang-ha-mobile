@@ -21,7 +21,11 @@ class CommentSerializer(serializers.ModelSerializer):
         method_name="get_type", 
         read_only=True
     )
-
+    parent_id = serializers.PrimaryKeyRelatedField(
+        queryset = Comment.objects.all(),
+        source = "parent",
+        write_only = True
+    )
 
     class Meta:
         model = Comment
@@ -34,6 +38,8 @@ class CommentSerializer(serializers.ModelSerializer):
             "author",
             "product",
             "product_id",
+            "parent",
+            "parent_id",
             "rating",
             "type",
             "created_at",
@@ -42,7 +48,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "deleted_by",
             "deleted_at"
         ]
-        read_only_fields = ["name","email","phone"]
+        read_only_fields = ["name","email","phone", "parent"]
 
     def get_type(self, obj):
         if obj.rating != 0:

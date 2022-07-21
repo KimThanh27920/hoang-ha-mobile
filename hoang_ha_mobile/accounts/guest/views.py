@@ -26,7 +26,6 @@ class LoginApiView(TokenObtainPairView):
 
 class RegisterApiView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
-    queryset = User.objects.all()
     
     def perform_create(self, serializer):
         self.user = serializer.save()

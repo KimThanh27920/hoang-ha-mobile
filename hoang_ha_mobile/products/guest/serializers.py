@@ -13,7 +13,6 @@ class ReadProductSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "insurance",
-            "status",
             "category"
         ]
 
@@ -22,6 +21,5 @@ class ReadProductSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "insurance",
-            "status",
             "category"
         ]
