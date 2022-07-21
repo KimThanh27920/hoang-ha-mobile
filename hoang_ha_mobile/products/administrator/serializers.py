@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from products.models import Product
 from variants.models import Variant
+
+#Serializer for POST, PUT, DELETE Product
 class ProductSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -18,6 +20,23 @@ class ProductSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
+#Serializer for GET  Product Variant
+class ProductReadInVariantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields =[
+            'id',
+            'name',
+            'description',
+            'insurance',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'deleted_at',
+            'deleted_by',
+        ]
+#Serializer for GET Variant in Product
 class VariantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Variant
@@ -46,7 +65,8 @@ class VariantDetailSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
-class ProductVariantSerializer(serializers.ModelSerializer):
+#Serializer for GET Product
+class ProductReadSerializer(serializers.ModelSerializer):
     variants = VariantDetailSerializer(many= True, read_only = True)
     class Meta:
         model = Product

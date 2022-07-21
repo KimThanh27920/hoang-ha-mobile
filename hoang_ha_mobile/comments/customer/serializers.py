@@ -5,9 +5,24 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = [
+            "id",
             "name",
             "email",
             "phone",
             "content",
             "product",
+        ]
+        
+class CommentRatingSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.Comment
+        fields = [
+            "id",
+            "name",
+            "email",
+            "phone",
+            "content",
+            "product",
+            "rating",
         ]

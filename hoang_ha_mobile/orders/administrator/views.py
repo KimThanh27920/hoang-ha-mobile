@@ -13,7 +13,7 @@ from datetime import datetime
 
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
-    queryset = Order.objects.all() #prefetch_related('orders_detail','variants','products')
+    queryset = Order.objects.all().prefetch_related('order_details')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
