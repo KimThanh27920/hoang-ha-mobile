@@ -49,7 +49,6 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
         if(self.request.method == "PATCH" or self.request.method == "PUT"):
             self.serializer_class = serializers.RatingUpdateSerializer                  
         return super().get_serializer_class()
-
     
     def get_queryset(self):
         if(self.request.method == "PUT" or self.request.method == "PATCH"):
