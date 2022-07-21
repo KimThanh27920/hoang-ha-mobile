@@ -7,6 +7,7 @@ User = get_user_model()
 class Article(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
+    content = models.TextField(default="", null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="articles", null=True)
     viewers = models.IntegerField(default=0)
     status = models.BooleanField(default=False)

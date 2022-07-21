@@ -9,7 +9,7 @@ class ArticleViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
     filter_backends = [filters.SearchFilter]
-    search_fields = ["title","author__full_name","description","updated_by__full_name","deleted_by__full_name","created_at","updated_at"]
+    search_fields = ["title","author__full_name","description","content","updated_by__full_name","deleted_by__full_name","created_at","updated_at"]
 
     def get_serializer_class(self):
         if self.action == "retrieve":
