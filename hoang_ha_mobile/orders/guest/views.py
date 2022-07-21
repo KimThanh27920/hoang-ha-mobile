@@ -1,44 +1,12 @@
 from urllib import response
 from rest_framework.response import Response
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderDetailSerializer
+from .serializers import OrderSerializer, OrderDetailSerializer, CancelOrderSerializer
 from ..models import Order, OrderDetail
 from variants.models import Variant
 
 
 class CreateOrderApiView(generics.ListCreateAPIView):
-    # queryset = Order.objects.all()
-
-    # def get_serializer(self, *args, **kwargs):
-    #     return OrderSerializer(*args, **kwargs)
-
-    # def post(self, request, *args, **kwargs):
-    #     serializer = OrderSerializer(data=request.data.get('order'))
-
-    #     if(serializer.is_valid()):
-    #         self.instance = serializer.save()
-    #         instance_price = 0
-    #         # print(self.instance.id)
-    #         dt = self.request.data.get("order_details")
-    #         for d in dt:
-    #             variant = Variant.objects.get(id=d.get('variant'))
-    #             instance_price += int(variant.price) * int(d.get('quantity'))
-    #             data = {
-    #                 "order": self.instance.id,
-    #                 "variant": d.get('variant'),
-    #                 "quantity": d.get('quantity'),
-    #                 "price": variant.price
-    #             }
-    #             serializer = OrderDetailSerializer(data=data)
-    #             if(serializer.is_valid()):
-    #                 serializer.save()
-    #         self.instance.total = instance_price
-    #         self.instance.save()
-    #         print(self.instance)
-    #         serializer = self.get_serializer(self.instance)
-    #         return Response(data=serializer.data)
-    #     else:
-    #         return Response(serializer.errors)
 
     serializer_class = OrderSerializer
 
@@ -87,7 +55,7 @@ class CreateOrderApiView(generics.ListCreateAPIView):
 
 
 class OrderDetailApiView(generics.RetrieveUpdateAPIView):
-    serializer_class = OrderSerializer
+    serializer_class = CancelOrderSerializer
     queryset = Order.objects.all().prefetch_related()
     lookup_url_kwarg = "order_id"
 
@@ -99,4 +67,4 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
         if data.status == "Chờ xác nhận":
             return super().update(request, *args, **kwargs)
         else:
-            return Response(data={"message": "Hong cho be oi!"})
+            return Response(data={"message": "Hông cho bé ơi!"})
