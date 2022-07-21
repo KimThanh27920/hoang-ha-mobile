@@ -9,7 +9,12 @@ class Comment(models.Model):
     phone = models.CharField(max_length=18)
     content = models.TextField()
     rating = models.IntegerField(default = 0)
+<<<<<<< HEAD
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)  
+=======
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies", null=True)
+>>>>>>> cd73e08857c65fd323114ef5112d89a326ed2a06
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_create_comment", null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

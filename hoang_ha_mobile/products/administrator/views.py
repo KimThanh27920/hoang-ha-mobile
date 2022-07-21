@@ -2,20 +2,20 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from .serializers import ProductSerializer, ProductVariantSerializer
+from .serializers import ProductSerializer, ProductReadSerializer
 from products.models import Product
 
 from datetime import datetime
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().prefetch_related('variants')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return ProductVariantSerializer
+            return ProductReadSerializer
         return ProductSerializer
 
     def perform_create(self, serializer):

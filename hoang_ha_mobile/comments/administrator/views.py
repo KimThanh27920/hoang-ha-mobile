@@ -5,11 +5,14 @@ from comments.administrator.serializers import CommentSerializer
 from rest_framework.permissions import IsAdminUser
 from comments.administrator.permissions import IsOwner
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all().select_related()
     serializer_class = CommentSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["rating"]
 
     def get_permissions(self):
         if self.action != 'update':
