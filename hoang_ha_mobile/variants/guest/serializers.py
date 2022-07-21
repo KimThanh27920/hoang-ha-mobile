@@ -13,6 +13,7 @@ class ReadVarianSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "product",
+            "image",
             "color",
             "version",
             "price",
@@ -31,6 +32,7 @@ class ReadDetailVarianSerializer(serializers.ModelSerializer):
             "sale",
             "color",
             "version",
+            "image",
             "size",
             "strap",
             "general",
