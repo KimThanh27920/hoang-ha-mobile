@@ -20,4 +20,7 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comments'
+
+    def __str__(self):
+        return str(self.name) + " + " + str(self.rating) + " + " + str(self.product.name)
         
