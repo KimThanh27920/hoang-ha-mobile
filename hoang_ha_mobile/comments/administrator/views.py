@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from comments.models import Comment
 from comments.administrator.serializers import CommentSerializer
 from rest_framework.permissions import IsAdminUser
-from comments.administrator.permissions import IsOwner
+from comments.administrator.permissions import IsOwner, NotEditedForeignKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 class CommentViewSet(ModelViewSet):
@@ -19,7 +19,9 @@ class CommentViewSet(ModelViewSet):
             return super().get_permissions()
         list_of_permission = super().get_permissions()
         is_owner = IsOwner()
+        not_edited = NotEditedForeignKey()
         list_of_permission.append(is_owner)
+        list_of_permission.append(not_edited)
         return list_of_permission 
 
     def perform_create(self, serializer):

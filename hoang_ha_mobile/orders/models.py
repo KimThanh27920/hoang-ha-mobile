@@ -22,6 +22,9 @@ class Order(models.Model):
 
     class Meta:
         db_table = 'orders' 
+    
+    def __str__(self):
+        return self.email
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_details")
@@ -37,4 +40,7 @@ class OrderDetail(models.Model):
 
 
     class Meta:
-        db_table = 'orders_detail' 
+        db_table = 'orders_detail'
+
+    def __str__(self):
+        return str(self.variant)

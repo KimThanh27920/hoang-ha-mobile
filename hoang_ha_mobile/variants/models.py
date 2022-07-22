@@ -39,4 +39,4 @@ class Variant(models.Model):
         db_table ='variant'
 
     def __str__(self) :
-        return self.product.name + " + " + str(self.price) +" VND"
+        return self.product.name + " + " + str(self.version) + " + " + str(self.color)
