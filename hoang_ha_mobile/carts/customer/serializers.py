@@ -1,7 +1,45 @@
+from dataclasses import field
 from rest_framework import serializers
 from .. import models
+from variants.models import Variant
+from products.models import Product
 
-class CartSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+            "description",
+            "insurance"
+        ]
+
+class VariantSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    class Meta:
+        model = Variant
+        fields = [
+            "id",
+            "product",
+            "image",
+            "color",
+            "version",
+            "price",
+            "sale"
+        ]
+
+class CartReadSerializer(serializers.ModelSerializer):
+    variant = VariantSerializer()
+    class Meta:
+        model = models.Cart
+        fields = [
+            "id",
+            "variant",
+            "quantity",
+        ]
+        # exclude = []
+        
+class CartWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cart
         fields = [

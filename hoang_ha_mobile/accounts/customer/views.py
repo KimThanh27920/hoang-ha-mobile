@@ -61,7 +61,8 @@ class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView)
     pagination_class = None
     lookup_url_kwarg = 'address_id'
     def get_queryset(self):
-        self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
+        self.queryset = models.Address.objects.filter(user=self.request.user.id)
+        # self.queryset = get_object_or_404(models.Address,user=self.request.user.id)
         return super().get_queryset()
         
 # class ProfileAPIView(generics.ListAPIView):

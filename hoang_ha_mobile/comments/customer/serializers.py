@@ -29,20 +29,21 @@ class CommentRatingSerializer(serializers.ModelSerializer):
             "rating",
         ]
         
-class CommentUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Comment
-        fields = [
-            "id"
-            "content",
-        ]
-        
-
-        
-class RatingUpdateSerializer(serializers.ModelSerializer):
+class CommentRatingUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = [
             "id",
-            "rating",
+            "content",
+            "rating"
         ]
+        
+
+        
+# class RatingUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = models.Comment
+#         fields = [
+#             "id",
+#             "rating",
+#         ]

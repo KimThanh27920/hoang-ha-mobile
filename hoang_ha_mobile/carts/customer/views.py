@@ -5,11 +5,14 @@ from rest_framework_simplejwt import authentication
 from .permissions import IsOwner
 
 class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
-    serializer_class = serializers.CartSerializer
+    serializer_class = serializers.CartReadSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, IsOwner]
+    
+    
+    
     def get_queryset(self):
-        self.queryset = models.Cart.objects.filter(user = self.request.user.id)
+        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
         return super().get_queryset() 
     
     def post(self, request, *args, **kwargs):
@@ -22,14 +25,15 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
                 "variant": request.data.get('variant'),
                 "quantity": quantity
             }
-            serializer = serializers.CartSerializer(id[0], data=data)
+            serializer = serializers.CartWriteSerializer(id[0], data=data)
             
         else:
-            serializer = serializers.CartSerializer(data=self.request.data)
+            serializer = serializers.CartWriteSerializer(data=self.request.data)
             
         if(serializer.is_valid()):
-            serializer.save(user=self.request.user)
-            return response.Response(True)
+            self.instance = serializer.save(user=self.request.user)
+            serializer = serializers.CartReadSerializer(self.instance)
+            return response.Response(data=serializer.data)
         else:
             return response.Response(serializer.errors)
         
