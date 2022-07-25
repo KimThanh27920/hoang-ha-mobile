@@ -11,8 +11,8 @@ User = get_user_model()
 
 class Variant(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name="variants")
-    color = models.CharField(max_length=255, null=True, blank=True)
-    version = models.CharField(max_length=255, null=True, blank=True)
+    color = models.CharField(max_length=255)
+    version = models.CharField(max_length=255)
     size = models.CharField(max_length=255, null=True, blank=True)
     strap = models.CharField(max_length=255, null=True, blank=True)
     general = models.CharField(max_length=255, null=True, blank=True)
@@ -24,16 +24,18 @@ class Variant(models.Model):
     camera = models.CharField(max_length=255, null=True, blank=True)
     pin = models.CharField(max_length=255, null=True, blank=True)
     screen = models.CharField(max_length=255, null=True, blank=True)
-    image = models.ImageField(null=True, upload_to="images/")
+    image = models.FileField(null=True, upload_to="images/")
     price = models.BigIntegerField(null=True)
     sale = models.BigIntegerField(null=True)
     status = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,related_name="user_create_variant", null=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,related_name="user_update_variant", null=True)
-    deleted_at = models.DateTimeField(blank=True, null=True)
-    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="user_delete_variant", null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,related_name="variant_created", null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,related_name="variant_updated", null=True)
+    deleted_at = models.DateTimeField(blank=True,null=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, related_name="variant_deleted", null=True)
+
+    unique_together = ['product','color','version']
 
     class Meta:
         db_table ='variant'

@@ -18,7 +18,6 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        print(user.set_password(password))
         user.save(using=self._db)
         return user
 
@@ -49,9 +48,10 @@ class CustomUser(AbstractUser):
     block_at = models.DateTimeField(blank=True, null=True)
     updated_by = models.CharField(max_length=255, blank=True)
     block_by = models.CharField(max_length=255, blank=True, null=True)
-   
+
     objects = UserManager()
-    REQUIRED_FIELDS = ["email","phone"]
+    REQUIRED_FIELDS = ["phone"]
+    USERNAME_FIELD = "email"
 
     class Meta:
         db_table = 'users'
