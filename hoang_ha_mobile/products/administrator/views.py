@@ -1,13 +1,14 @@
+from urllib import response
 from rest_framework import viewsets,filters
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
 
 from .serializers import ProductSerializer, ProductReadSerializer
 from products.models import Product
-
 from datetime import datetime
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -16,6 +17,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         "retrieve": ProductReadSerializer,
         "create": ProductSerializer,
         "update": ProductSerializer,
+        "delete": ProductSerializer
     }
 
     queryset = Product.objects.all().prefetch_related('variants').select_related('category')
@@ -23,12 +25,17 @@ class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['category__name','variants__color','variants__version','product__name']
+    search_fields = ['category__name','variants__color','variants__version','name']
     filterset_fields = ['insurance','status','created_by','category__name','variants__color','variants__version']
 
     def get_serializer_class(self):
         return self.serializer_class[self.action]
-
+    
+    def get_queryset(self):
+        if self.request.method == "GET":
+            return super().get_queryset().annotate(total_rating=Count('favorite'))
+        return super().get_queryset()
+   
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
         serializer.save(updated_by=self.request.user)

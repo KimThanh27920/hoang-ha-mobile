@@ -11,7 +11,7 @@ class Product(models.Model):
     insurance = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
     status = models.BooleanField(default=False)
-    favorite = models.ManyToManyField(User, null=True,blank=True, default=None)
+    favorite = models.ManyToManyField(User,blank=True, related_name="favorites")
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,related_name="product_created", null=True)
     updated_at = models.DateTimeField(auto_now=True)

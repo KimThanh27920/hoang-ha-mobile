@@ -4,31 +4,39 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .serializers import OrderSerializer, OrderDetailSerializer
-from orders.models import Order, OrderDetail
+from .serializers import OrderSerializer,OrderReadSerializer ,OrderRetrieveSerializer
+from orders.models import Order
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Sum
 from datetime import datetime
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    serializer_class = OrderSerializer
+    serializer_class = {
+        "list": OrderReadSerializer,
+        "retrieve": OrderRetrieveSerializer,
+        "update": OrderSerializer,
+        "delete": OrderSerializer
+    }
     queryset = Order.objects.all().prefetch_related('order_details')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    #search_fields = ['product__id']
-    filterset_fields = ['status','created_by']
+    filterset_fields = ['email','status']
+    search_fields = ['email','shipping','status','delivery_address']
 
-    # def get_serializer_class(self):
-    #     if self.request.method == 'GET':
-    #         return OrderReadSerializer
-    #     return OrderSerializer
+    def get_serializer_class(self):
+        return self.serializer_class[self.action]
     
+    def get_queryset(self):
+        if self.request.method == "GET":
+            return super().get_queryset().annotate(number_product=Sum('order_details__quantity'))
+        return super().get_queryset()
+
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-        serializer.save(updated_by=self.request.user)
+       pass
     
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', True)
