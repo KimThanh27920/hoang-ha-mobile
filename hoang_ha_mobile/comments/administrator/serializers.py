@@ -1,4 +1,5 @@
 from asyncore import read
+from xml.etree.ElementInclude import default_loader
 from django.forms import ValidationError
 from rest_framework import serializers
 from comments.models import Comment
@@ -24,7 +25,8 @@ class CommentSerializer(serializers.ModelSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         queryset = Comment.objects.all(),
         source = "parent",
-        write_only = True
+        write_only = True,
+        default=None
     )
 
     class Meta:

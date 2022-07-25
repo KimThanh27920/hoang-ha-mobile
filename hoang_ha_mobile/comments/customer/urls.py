@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.CommentListOwner.as_view(), name="list_comment"),
-    path('rating/', views.RatingAPIView.as_view(), name="list_rating_product"),
+    path('rating/', views.RatingAPIView.as_view(), name="list_create_rating_product"),
     path('<int:comment_id>/', views.CommentDetail.as_view(), name="comment_detail"),
 ]
