@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .serializers import VariantSerializer,VariantReadSerializer
+from .serializers import VariantSerializer
 from variants.models import Variant
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,10 +19,10 @@ class VariantViewSet(viewsets.ModelViewSet):
     #search_fields = ['product__id']
     filterset_fields = ['product','status']
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return VariantReadSerializer
-        return VariantSerializer
+    # def get_serializer_class(self):
+    #     if self.request.method == 'GET':
+    #         return VariantReadSerializer
+    #     return VariantSerializer
     
     def get_queryset(self):
         if self.request.method == 'GET':

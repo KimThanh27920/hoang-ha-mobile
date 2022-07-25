@@ -31,6 +31,7 @@ class VariantReadInProductSerializer(serializers.ModelSerializer):
 class ProductReadSerializer(serializers.ModelSerializer):
     category = CategoryReadInProductSerializer(read_only =True)
     variants = VariantReadInProductSerializer(many=True,read_only =True)
+    favorite_number = serializers.SerializerMethodField()
     class Meta:
         model = Product
         fields =[
@@ -40,7 +41,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'description',
             'insurance',
             'variants',
-            'favorite',
+            'favorite_number',
             'created_at',
             'created_by',
             'updated_at',
@@ -48,6 +49,9 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
+    def get_favorite_number(self, obj):
+        favorite_num = Product.objects.count('favorite')
+        return favorite_num
 
 #Serializer for POST, PUT, DELETE Product
 class ProductSerializer(serializers.ModelSerializer):
