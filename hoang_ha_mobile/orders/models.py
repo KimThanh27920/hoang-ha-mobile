@@ -34,7 +34,6 @@ class OrderDetail(models.Model):
     quantity = models.BigIntegerField()
     
 
-
     class Meta:
         db_table = 'orders_detail'
 
