@@ -12,7 +12,7 @@ class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = serializers.ChangePasswordSerializer
     # model = User
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.AllowAny, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     def get_object(self, queryset=None):
         obj = self.request.user
         return obj
@@ -86,6 +86,18 @@ class ProfileUpdateRetrieveAPIView(generics.RetrieveUpdateAPIView):
             
         return super().get_serializer_class()
     
+    def get_object(self, queryset=None):
+        obj = get_object_or_404(User,id=self.request.user.id)
+        return obj    
+    
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user.id)
+        
+        
+class UploadImageAPIView(generics.UpdateAPIView):
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.UserUploadImage
     def get_object(self, queryset=None):
         obj = get_object_or_404(User,id=self.request.user.id)
         return obj    

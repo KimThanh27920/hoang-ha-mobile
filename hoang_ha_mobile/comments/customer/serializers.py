@@ -1,7 +1,12 @@
+
 from rest_framework import serializers
 from .. import models
-        #  serializer child
+from products.models import Product
+ 
+
 class CommentSerializer(serializers.ModelSerializer):
+    # replies = CommentReadOnlySerializer(source= "get_children_comment",many = True)    
+    # replies = serializers.SerializerMethodField()
     class Meta:
         model = models.Comment
         fields = [
@@ -9,13 +14,20 @@ class CommentSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "phone",
+            # "replies",
             "parent",
             "content",
-            "product",
+            "variant",
         ]
+    # def get_replies(self, obj):
+    #         replies = obj.get_children_comment()
+    #         serializer = CommentSerializer(replies, many=True, read_only=True)  
+    #         return serializer.data
+        
         
 class CommentRatingSerializer(serializers.ModelSerializer):
-    
+    # replies = CommentReadOnlySerializer(many= True, read_only=True)
+   
     class Meta:
         model = models.Comment
         fields = [
@@ -23,11 +35,12 @@ class CommentRatingSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "phone",
-            "parent",
+            # "replies",
             "content",
-            "product",
+            "variant",
             "rating",
         ]
+        
         
 class CommentRatingUpdateSerializer(serializers.ModelSerializer):
     class Meta:

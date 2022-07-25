@@ -4,25 +4,30 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 
-from .serializers import VariantSerializer,VariantReadSerializer
+from .serializers import VariantSerializer, VariantReadSerializer
 from variants.models import Variant
 
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
 
 class VariantViewSet(viewsets.ModelViewSet):
-    serializer_class = VariantSerializer
+    serializer_class = {
+        "list": VariantReadSerializer,
+        "retrieve": VariantReadSerializer,
+        "create": VariantSerializer,
+        "update": VariantSerializer,
+        "delete": VariantSerializer
+    }
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    #search_fields = ['product__id']
-    filterset_fields = ['product','status']
+    search_fields = ['product__name','color','version','front_cam','camera','pin','screen','storage','size','price','sale','network']
+    filterset_fields = ['product__name','status','color','version','front_cam','camera','pin','screen','storage','size','price','sale','network']
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return VariantReadSerializer
-        return VariantSerializer
+        return self.serializer_class[self.action]
+    
     
     def get_queryset(self):
         if self.request.method == 'GET':
