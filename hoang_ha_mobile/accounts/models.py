@@ -48,6 +48,7 @@ class CustomUser(AbstractUser):
     block_at = models.DateTimeField(blank=True, null=True)
     updated_by = models.CharField(max_length=255, blank=True)
     block_by = models.CharField(max_length=255, blank=True, null=True)
+    username = None
 
     objects = UserManager()
     REQUIRED_FIELDS = ["phone"]
