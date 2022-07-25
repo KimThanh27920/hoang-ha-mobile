@@ -34,6 +34,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
+
     def get_token(cls, user):
         token = super().get_token(user)
 

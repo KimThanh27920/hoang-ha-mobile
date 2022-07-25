@@ -39,6 +39,8 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
+    username = None
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
     full_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=10,unique=True)
@@ -51,12 +53,15 @@ class CustomUser(AbstractUser):
     block_by = models.CharField(max_length=255, blank=True, null=True)
    
     objects = UserManager()
-    REQUIRED_FIELDS = ["email","phone"]
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['phone']
+
 
     class Meta:
         db_table = 'users'
     def __str__(self):
-        return self.username
+        return self.email
 
 class Address(models.Model):
     street = models.CharField(max_length=255)
