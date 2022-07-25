@@ -46,7 +46,7 @@ class AddressListCreateAPIView(generics.ListCreateAPIView):
     # queryset = models.Address.objects.all()
     pagination_class = None
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
         self.queryset = models.Address.objects.filter(user=self.request.user.id)
         return super().get_queryset()
@@ -57,7 +57,7 @@ class AddressListCreateAPIView(generics.ListCreateAPIView):
 class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.AddressSerializer
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
     lookup_url_kwarg = 'address_id'
     def get_queryset(self):
@@ -77,7 +77,7 @@ class AddressRetrieveDestroyUpdateAPIView(generics.RetrieveUpdateDestroyAPIView)
     
 class ProfileUpdateRetrieveAPIView(generics.RetrieveUpdateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     def get_serializer_class(self):
         if(self.request.method == "GET"):
             self.serializer_class = serializers.ProfileSerializer

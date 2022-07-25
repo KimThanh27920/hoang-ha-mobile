@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class CommentListOwner(generics.ListCreateAPIView):
     serializer_class = serializers.CommentSerializer
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['product']
     filterset_fields = ['product']
@@ -26,7 +26,7 @@ class CommentListOwner(generics.ListCreateAPIView):
 class RatingAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CommentRatingSerializer
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['product']
     filterset_fields = ['product']
@@ -55,7 +55,7 @@ class RatingAPIView(generics.ListCreateAPIView):
 class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     # serializer_class = serializers.CommentUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
     lookup_url_kwarg = 'comment_id'
             
     def get_serializer_class(self):
