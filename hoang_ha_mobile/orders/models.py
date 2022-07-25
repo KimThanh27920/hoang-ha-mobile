@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 from variants.models import Variant
 
 User = get_user_model()
@@ -7,7 +8,7 @@ User = get_user_model()
 class Order(models.Model):
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=10)
-    email = models.EmailField()
+    email = models.EmailField(_('email address'))
     shipping = models.CharField(max_length=255)
     delivery_address = models.CharField(max_length=255)
     note = models.TextField()
