@@ -39,7 +39,6 @@ class OrderDetail(models.Model):
     deleted_at = models.DateTimeField(blank=True,null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.SET_NULL,related_name ="order_detail_deleted", blank=True, null=True)
 
-
     class Meta:
         db_table = 'orders_detail'
 
