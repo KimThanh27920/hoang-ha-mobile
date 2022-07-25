@@ -1,5 +1,5 @@
 from django.db import models
-from products.models import Product
+from variants.models import Variant
 from django.contrib.auth import get_user_model
 User = get_user_model()
 # Create your models here.
@@ -9,7 +9,7 @@ class Comment(models.Model):
     phone = models.CharField(max_length=18)
     content = models.TextField()
     rating = models.IntegerField(default = 0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments", null=True)
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name="comments", null=True)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="replies", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name ="comment_created" ,blank=True,null=True)
@@ -23,4 +23,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.name) + " + " + str(self.rating) + " + " + str(self.product.name)
-        
+    
+    

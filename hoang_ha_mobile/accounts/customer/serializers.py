@@ -4,6 +4,13 @@ from rest_framework import serializers
 from .. import models
 User = get_user_model()
 
+class UserUploadImage(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "image"
+        ]
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -12,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone",
             "email",
             "birthday",
-            "sex"
+            "sex",
         ]
         
 class ChangePasswordSerializer(serializers.ModelSerializer):
@@ -42,5 +49,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "birthday",
             "sex",
-            'addresses'
+            'addresses',
+            'image',
         ]
