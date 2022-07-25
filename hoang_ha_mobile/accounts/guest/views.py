@@ -1,3 +1,4 @@
+import email
 import random
 from shutil import ReadError
 from django.shortcuts import render, get_object_or_404
@@ -15,7 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt import tokens
 from .serializers import AddressSerializer, MyTokenObtainPairSerializer, RegisterSerializer, PinSerializer, ChangePasswordWithPinSerializer
-from ..models import Pin
+from ..models import CustomUser, Pin
 from django.contrib.auth import get_user_model
 
 # Create your views here.
@@ -26,30 +27,10 @@ class LoginApiView(TokenObtainPairView):
 
 class RegisterApiView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
-    
-    def perform_create(self, serializer):
-        self.user = serializer.save()
-          
-
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        new_user = User.objects.get(email=request.data['email'])
-
-        #Adding address
-        serializer = AddressSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=new_user)
         
-        refresh = tokens.RefreshToken.for_user(self.user)
-        refresh['email'] = request.data['email']
-        data = {
-            "user": response.data,
-            "token": {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token)
-            }
-        }
-        return Response(data=data, status=status.HTTP_201_CREATED)
+    def create(self, request, *args, **kwargs):
+        request.data['email'] = request.data.get('email').lower()
+        return super().create(request, *args, **kwargs)
 
 class ForgotPasswordApiView(APIView):
 
