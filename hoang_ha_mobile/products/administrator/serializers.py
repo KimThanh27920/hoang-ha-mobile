@@ -1,64 +1,47 @@
 from rest_framework import serializers
+
+from categories.models import Category
 from products.models import Product
 from variants.models import Variant
 
-#Serializer for POST, PUT, DELETE Product
-class ProductSerializer(serializers.ModelSerializer):
-    
+#serializer for GET Category in Product
+class CategoryReadInProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
-        fields =[
-            'id',
-            'name',
-            'description',
-            'insurance',
-            'category',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'deleted_at',
-            'deleted_by',
+        model = Category
+        fields = [
+            "id",
+            "name",
+            "status",
         ]
-#Serializer for GET  Product Variant
-class ProductReadInVariantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields =[
-            'id',
-            'name',
-            'description',
-            'insurance',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'deleted_at',
-            'deleted_by',
-        ]
+
 #Serializer for GET Variant in Product
-class VariantDetailSerializer(serializers.ModelSerializer):
+class VariantReadInProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Variant
         fields = [
             'id',
             'color',
             'version',
-            'image',
-            'size',
-            'strap',
-            'general',
-            'utilities',
-            'network',
-            'storage',
-            'os_cpu',
-            'front_cam',
-            'camera',
-            'pin',
-            'screen',
             'price',
             'sale',
             'status',
+        ]
+
+#Serializer for GET LIST Product
+class ProductReadSerializer(serializers.ModelSerializer):
+    category = CategoryReadInProductSerializer(read_only =True)
+    variants = VariantReadInProductSerializer(many=True,read_only =True)
+    favorite_number = serializers.SerializerMethodField()
+    class Meta:
+        model = Product
+        fields =[
+            'id',
+            'name',
+            'category',
+            'description',
+            'insurance',
+            'variants',
+            'favorite_number',
             'created_at',
             'created_by',
             'updated_at',
@@ -66,9 +49,12 @@ class VariantDetailSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
-#Serializer for GET Product
-class ProductReadSerializer(serializers.ModelSerializer):
-    variants = VariantDetailSerializer(many= True, read_only = True)
+    def get_favorite_number(self, obj):
+        favorite_num = Product.objects.count('favorite')
+        return favorite_num
+
+#Serializer for POST, PUT, DELETE Product
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields =[
@@ -77,7 +63,6 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'description',
             'insurance',
             'category',
-            'variants',
             'created_at',
             'created_by',
             'updated_at',
@@ -85,3 +70,5 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted_by',
         ]
+
+

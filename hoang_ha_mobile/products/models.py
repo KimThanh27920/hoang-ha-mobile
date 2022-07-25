@@ -1,7 +1,6 @@
 from email.policy import default
 from django.db import models
 from categories.models import Category
-
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -9,10 +8,10 @@ User = get_user_model()
 class Product(models.Model):
     name = models.CharField(max_length=255, unique= True)
     description = models.TextField(null=True)
-    insurance = models.IntegerField(null=True)
+    insurance = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
     status = models.BooleanField(default=False)
-    favorite = models.ManyToManyField(User)
+    favorite = models.ManyToManyField(User, null=True,blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,related_name="product_created", null=True)
     updated_at = models.DateTimeField(auto_now=True)

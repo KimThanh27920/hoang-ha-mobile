@@ -9,3 +9,7 @@ class CartSerializer(serializers.ModelSerializer):
             "variant",
             "quantity",
         ]
+        
+    def validated_data(self):
+        print(self.quantity)
+        return super().validated_data
