@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('variants', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('products', '0001_initial'),
     ]
 
     operations = [
@@ -27,11 +28,19 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('deleted_at', models.DateTimeField(blank=True, null=True)),
+<<<<<<< HEAD
+                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_create_comment', to=settings.AUTH_USER_MODEL)),
+                ('deleted_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_delete_comment', to=settings.AUTH_USER_MODEL)),
+                ('parent', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='replies', to='comments.comment')),
+                ('product', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='products.product')),
+                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_update_comment', to=settings.AUTH_USER_MODEL)),
+=======
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comment_created', to=settings.AUTH_USER_MODEL)),
                 ('deleted_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comment_deleted', to=settings.AUTH_USER_MODEL)),
                 ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='replies', to='comments.comment')),
                 ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comment_updated', to=settings.AUTH_USER_MODEL)),
                 ('variant', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='variants.variant')),
+>>>>>>> 9b25f3c29951b327d7a1b24043c1543a31bcc9f1
             ],
             options={
                 'db_table': 'comments',

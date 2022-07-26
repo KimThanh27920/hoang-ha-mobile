@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('variants', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('variants', '0001_initial'),
     ]
 
     operations = [
@@ -21,7 +22,11 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.IntegerField(default=1)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart', to=settings.AUTH_USER_MODEL)),
+<<<<<<< HEAD
+                ('variant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart', to='variants.variant')),
+=======
                 ('variant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='carts', to='variants.variant')),
+>>>>>>> 9b25f3c29951b327d7a1b24043c1543a31bcc9f1
             ],
             options={
                 'db_table': 'carts',

@@ -60,8 +60,8 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-class Address(models.Model):
-    street = models.CharField(max_length=255)
+class Address(models.Model): #/api address google address autocomplete
+    street = models.CharField(max_length=255)  #textField /api address 
     ward = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
     province = models.CharField(max_length=255)
