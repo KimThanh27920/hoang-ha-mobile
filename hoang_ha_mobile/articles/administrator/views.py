@@ -21,7 +21,7 @@ class ArticleViewSet(ModelViewSet):
         is_paginate = bool(request.query_params.get("paginate", False) == "true")
         if is_paginate:
             return super().list(request, *args, **kwargs)
-        instances = self.get_queryset()
+        instances = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(instances, many=True)
         return Response(serializer.data)
 
@@ -50,5 +50,6 @@ class ArticleViewSet(ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.deleted_at = datetime.now()
+        instance.title += "/" + str(instance.deleted_at)
         instance.deleted_by = self.request.user
         instance.save()

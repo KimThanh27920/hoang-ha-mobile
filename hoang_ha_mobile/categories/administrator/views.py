@@ -22,9 +22,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         is_paginate = bool(request.query_params.get("paginate",False) == 'true')
-        if is_paginate == True:
+        if is_paginate:
             return super().list(request, *args, **kwargs)
-        instances = self.get_queryset()
+        instances = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(instances, many=True)
         return Response(serializer.data)
 
@@ -38,4 +38,5 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.deleted_by = self.request.user
         instance.deleted_at = datetime.now()
+        instance.name += "/" + str(instance.deleted_at)
         instance.save()
