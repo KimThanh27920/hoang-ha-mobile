@@ -1,3 +1,4 @@
+from functools import partial
 from urllib import response
 from rest_framework import viewsets,filters
 from rest_framework.permissions import IsAdminUser
@@ -9,6 +10,8 @@ from django.db.models import Count
 
 from .serializers import ProductSerializer, ProductReadSerializer
 from products.models import Product
+from variants.models import Variant
+from variants.administrator.serializers import VariantSerializer
 from datetime import datetime
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -20,7 +23,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         "delete": ProductSerializer
     }
 
-    queryset = Product.objects.all().prefetch_related('variants').select_related('category')
+    queryset = Product.objects.exclude(deleted_at__isnull=False).prefetch_related('variants').select_related('category')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     
@@ -66,5 +69,20 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = ProductSerializer(instance=instance, data=data,partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        try:
+            child = Variant.objects.get(product=instance.id)
+            child_data = {
+                "deleted_by": self.request.user.id,
+                "deleted_at": datetime.now()
+            } 
+            child_serializer = VariantSerializer(instance=child, data=child_data, partial=True)
+            child_serializer.is_valid(raise_exception=True)
+            child_serializer.save()
+        except:
+            pass
+
+
+       
 
 

@@ -31,8 +31,8 @@ class VariantViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         if self.request.method == 'GET':
-           return Variant.objects.all().select_related('product') 
-        return Variant.objects.all()
+           return Variant.objects.exclude(deleted_at__isnull=False).select_related('product') 
+        return Variant.objects.exclude(deleted_at__isnull=False)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

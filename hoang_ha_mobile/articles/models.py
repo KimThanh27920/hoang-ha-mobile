@@ -1,4 +1,5 @@
 
+from email.mime import image
 from django.db import models
 from django.contrib.auth import get_user_model
 from tags.models import Tag
@@ -19,6 +20,7 @@ class Article(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL,related_name ="article_updated", blank=True, null=True)
     deleted_at = models.DateTimeField(blank=True,null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.SET_NULL,related_name ="article_deleted", blank=True, null=True)
+    image = models.ImageField(null=True, upload_to = "images/")
     
     class Meta: 
         db_table = 'articles'

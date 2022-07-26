@@ -19,7 +19,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         "update": OrderSerializer,
         "delete": OrderSerializer
     }
-    queryset = Order.objects.all().prefetch_related('order_details')
+    queryset = Order.objects.exclude(deleted_at__isnull=False).prefetch_related('order_details')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
