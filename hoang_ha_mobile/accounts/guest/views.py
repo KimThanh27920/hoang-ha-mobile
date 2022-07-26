@@ -56,7 +56,7 @@ class ForgotPasswordApiView(APIView):
         try:
             user = User.objects.get(email=request.data["email"])
         except:
-            return Response({"message": "Nè! Email " + request.data['email'] + " này có đăng ký đâu mà lấy lại mật khẩu?"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
         pin_code = self.create_pin(user)
         print(pin_code)
@@ -69,7 +69,7 @@ class ForgotPasswordApiView(APIView):
             recipient_list=[request.data["email"]],
             html_message=html_content
         )
-        return Response({"message": "Nè! " + user.email + " có cái mật khẩu cũng không nhớ gửi qua email mật khẩu mới rồi đó."})
+        return Response({"message": "Send email completed"})
 
 class ChangePasswordWithPINApiView(APIView):
     
