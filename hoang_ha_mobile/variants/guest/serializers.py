@@ -22,14 +22,10 @@ class ReadVarianSerializer(serializers.ModelSerializer):
 
 
 class ReadDetailVarianSerializer(serializers.ModelSerializer):
-    product = ReadProductSerializer()
     class Meta:
         model = Variant
         fields = [
             "id",
-            "product",
-            "price",
-            "sale",
             "color",
             "version",
             "image",

@@ -13,14 +13,23 @@ class CommentListOwner(generics.ListCreateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['product']
-    filterset_fields = ['product']
-    def get_queryset(self):
-        self.queryset = models.Comment.objects.filter(created_by = self.request.user.id, parent = None)
+    search_fields = ['variant']
+    filterset_fields = ['variant']
+    def get_queryset(self):               
+        self.queryset = models.Comment.objects.filter(created_by = self.request.user.id, rating=0)
+            
         return super().get_queryset()
+    def create(self, request, *args, **kwargs):
+        comment_instance = models.Comment.objects.filter(variant = self.request.data.get('variant'), id=self.request.data.get('parent'))
+        if(comment_instance.exists()):
+            return super().create(request, *args, **kwargs)
+        else:
+            return response.Response(data={"detail": "Comment failed,Error: Different variant or comment parent, Can't create new instance"}, status=status.HTTP_404_NOT_FOUND)
+    
     
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, updated_by=self.request.user)
+        
 
     
 class RatingAPIView(generics.ListCreateAPIView):
@@ -28,15 +37,15 @@ class RatingAPIView(generics.ListCreateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['product']
-    filterset_fields = ['product']
+    search_fields = ['variant']
+    filterset_fields = ['variant']
     
     def get_queryset(self):    
         self.queryset = models.Comment.objects.filter( ~Q(rating=0),created_by = self.request.user.id)
         return super().get_queryset()
     
     def create(self, request, *args, **kwargs):        
-        rate = models.Comment.objects.filter(~Q(rating=0), created_by=self.request.user.id, product=self.request.data.get('product'))
+        rate = models.Comment.objects.filter(~Q(rating=0), created_by=self.request.user.id, variant=self.request.data.get('variant'))
         if(rate.exists()):    
             # TODO: @Toan: All error should be managed in a base/errors.py for all errors of platforms to easier maintain later. Should not use magic errors in all codes.
             return response.Response(data={"detail": "Rating existed, Can't create new instance"}, status=status.HTTP_404_NOT_FOUND)

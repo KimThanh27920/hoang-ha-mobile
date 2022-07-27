@@ -1,9 +1,12 @@
+from unicodedata import category
 from rest_framework import filters, viewsets, permissions
 from categories.administrator.serializers import CategorySerializer
 from categories.models import Category
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
+from products.administrator.views import ProductViewSet
+from products.models import Product
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -40,4 +43,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
         instance.deleted_by = self.request.user
         instance.deleted_at = datetime.now()
         instance.name += "/" + str(instance.deleted_at)
+        products = Product.objects.filter(category=instance)
+        product_view = ProductViewSet()
+        product_view.request = self.request
+        for product in products:
+            product_view.perform_destroy(instance=product)
         instance.save()
