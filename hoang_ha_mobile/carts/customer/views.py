@@ -15,10 +15,13 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
         return super().get_queryset() 
     
     def post(self, request, *args, **kwargs):
-        id = models.Cart.objects.filter(user = self.request.user.id, variant = int(self.request.data.get('variant')))
+        try:
+            id  = models.Cart.objects.filter(user = self.request.user.id, variant = int(self.request.data.get('variant')))
+        except:
+            return response.Response(data={"Error": "Lost data"},  status = status.HTTP_400_BAD_REQUEST)
         if(id.exists()):
             if not (request.data.get('quantity') > 0): 
-               return response.Response(data={"Error: Invalid quantity"})
+               return response.Response(data={"Error": "Invalid quantity"},  status = status.HTTP_400_BAD_REQUEST)
             quantity = request.data.get('quantity') + id[0].quantity
             data = {
                 "variant": request.data.get('variant'),
@@ -48,12 +51,16 @@ class CartListAddAPIView(generics.CreateAPIView):
     
     def post(self, request, *args, **kwargs):
         items = self.request.data.get('items')
+        if(len(items) < 1): 
+            return response.Response(data={"Error: Invalid data"}, status = status.HTTP_400_BAD_REQUEST)
+        for item in items:
+            if not (item.get('quantity') > 0): 
+                return response.Response(data={"Error: Invalid quantity"}, status = status.HTTP_400_BAD_REQUEST)
         data_return = []
         for item in items:
             id = models.Cart.objects.filter(user = self.request.user.id, variant = int(item.get('variant')))
             if(id.exists()):
-                if not (item.get('quantity') > 0): 
-                    return response.Response(data={"Error: Invalid quantity"})
+                
                 quantity = item.get('quantity') + id[0].quantity
                 data = {
                     "variant": item.get('variant'),
