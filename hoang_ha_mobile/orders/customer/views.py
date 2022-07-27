@@ -5,26 +5,25 @@ from .. import models
 from variants.models import Variant
 from rest_framework_simplejwt import authentication
 
-class CreateOrderAPIView(generics.ListCreateAPIView):
+class ListCreateOrderAPIView(generics.ListCreateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = serializers.OrderSerializer
     
     def get_queryset(self):        
         self.queryset = models.Order.objects.filter(created_by=self.request.user.id)
-        return super().get_queryset()
-        
-      
+        return super().get_queryset()    
     
     def post(self, request, *args, **kwargs):
-        serializer = serializers.OrderSerializer(data=request.data.get('order'))
-            
-        if(serializer.is_valid()):
+        serializer = serializers.OrderSerializer(data=request.data.get('order'))            
+        if(serializer.is_valid()):            
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
             # print(self.instance.id)
             array_order_detail = self.request.data.get("order_detail")
             for order_detail in array_order_detail:
+                if not (int(order_detail.get('quantity')) > 0): 
+                    return response.Response(data={"Error: Invalid quantity"})
                 try:
                     variant = Variant.objects.get(id=order_detail.get('variant'))
                 except:
@@ -47,7 +46,8 @@ class CreateOrderAPIView(generics.ListCreateAPIView):
             self.instance.save()
             # print(self.instance)
             serializer = self.get_serializer(self.instance)
-            return response.Response(data=serializer.data)
+            # serializer = serializers.OrderDetailReadOnlySerializer(self.instance)
+            return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors)
 

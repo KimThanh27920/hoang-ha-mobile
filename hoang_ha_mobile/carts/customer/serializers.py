@@ -47,6 +47,7 @@ class CartWriteSerializer(serializers.ModelSerializer):
             "variant",
             "quantity",
         ]
+    
         
 class CartUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,3 +57,9 @@ class CartUpdateSerializer(serializers.ModelSerializer):
             "quantity",
         ]
         read_only_fields = ["variant"]
+    def validate_quantity(self, quantity):
+        print(quantity)
+        if not (quantity > 0):
+            raise serializers.ValidationError("Invalid quantity")
+        else:
+            return quantity
