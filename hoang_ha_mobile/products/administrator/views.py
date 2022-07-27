@@ -70,18 +70,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        try:
-            child = Variant.objects.get(product=instance.id)
-            child_data = {
-                "deleted_by": self.request.user.id,
-                "deleted_at": datetime.now()
-            } 
-            child_serializer = VariantSerializer(instance=child, data=child_data, partial=True)
-            child_serializer.is_valid(raise_exception=True)
-            child_serializer.save()
-        except:
-            pass
-
 
        
 
