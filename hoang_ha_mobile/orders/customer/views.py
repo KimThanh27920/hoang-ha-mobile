@@ -15,7 +15,7 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
         return super().get_queryset()    
     
     def post(self, request, *args, **kwargs):
-        serializer = serializers.OrderWriteSerializer(data=request.data.get('order'))            
+        serializer = serializers.OrderSerializer(data=request.data.get('order'))            
         if(serializer.is_valid()):            
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
@@ -46,8 +46,14 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             self.instance.save()
             # print(self.instance)
             # serializer = self.get_serializer(self.instance)
-            serializer = serializers.OrderWriteSerializer(self.instance)
-            # serializer = serializers.OrderDetailReadOnlySerializer(self.instance)
+            serializer = serializers.OrderSerializer(self.instance)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors)
+
+
+# class ListOrderOwner(generics.ListAPIView):
+#     serializer_class = serializers.OrderSerializer
+#     def get_queryset(self):
+#         self.queryset = models.Order.objects.filter(created_by = self.request.user.id)
+#         return super().get_queryset()
