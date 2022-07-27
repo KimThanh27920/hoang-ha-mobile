@@ -5,18 +5,17 @@ from django.forms import ValidationError
 from rest_framework import serializers
 from comments.models import Comment
 from accounts.administrator.serializers import UserSerializer
-from products.models import Product
-from products.administrator.serializers import ProductSerializer
+from variants.models import Variant
+from variants.administrator.serializers import VariantSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer(source="created_by", read_only=True)
     updated_by = UserSerializer(read_only=True)
-    deleted_by = UserSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
-    product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(),
-        source="product",
+    # variant = VariantSerializer(read_only=True)
+    variant_id = serializers.PrimaryKeyRelatedField(
+        queryset=Variant.objects.all(),
+        source="variant",
         write_only=True
     )
     type = serializers.SerializerMethodField(
@@ -38,17 +37,15 @@ class CommentSerializer(serializers.ModelSerializer):
             "phone",
             "content",
             "author",
-            "product",
-            "product_id",
+            "variant",
+            "variant_id",
             "parent",
             "parent_id",
             "rating",
             "type",
             "created_at",
             "updated_by",
-            "updated_at",
-            "deleted_by",
-            "deleted_at"
+            "updated_at"
         ]
         read_only_fields = ["name","email","phone", "parent","rating"]
 

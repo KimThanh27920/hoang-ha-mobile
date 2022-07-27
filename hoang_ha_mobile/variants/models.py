@@ -1,6 +1,9 @@
+from turtle import color
+from xml.dom import pulldom
 from django.db import models
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from products.models import Product
 
 User = get_user_model()
@@ -35,10 +38,18 @@ class Variant(models.Model):
     deleted_at = models.DateTimeField(blank=True,null=True)
     deleted_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, related_name="variant_deleted", null=True)
 
-    unique_together = ['product','color','version']
+    
 
     class Meta:
         db_table ='variant'
+        unique_together = ['product','color','version']git pull
 
     def __str__(self) :
         return self.product.name + " + " + str(self.version) + " + " + str(self.color)
+
+    # def validate_unique(self, *args, **kwargs):
+    #     super().validate_unique(*args, **kwargs) # python3
+    #     if self.__class__.objects.filter(product = self.product,color =self.color,version =self.version).exists():
+    #         raise ValidationError(
+    #             message='This variant already exists.',
+    #         )

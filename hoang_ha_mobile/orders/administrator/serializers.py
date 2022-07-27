@@ -98,8 +98,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_at',
             'updated_by',
-            # 'deleted_at',
-            # 'deleted_by',
+            'deleted_at',
+            'deleted_by',
 
         ]
 #serializer for POST,PUT, DELETE Order Detail 
