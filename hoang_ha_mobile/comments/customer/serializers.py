@@ -1,12 +1,28 @@
 
+from dataclasses import field
 from rest_framework import serializers
 from .. import models
-from products.models import Product
- 
+from variants.models import Variant
+
+
+class ShortInfoProductSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
+    
+class VarianSerializer(serializers.ModelSerializer):
+    product = ShortInfoProductSerializer()
+    class Meta:
+        model = Variant
+        fields = [
+            "id",
+            "product",
+            "image",
+            "color",
+            "version",
+        ]
 
 class CommentSerializer(serializers.ModelSerializer):
-    # replies = CommentReadOnlySerializer(source= "get_children_comment",many = True)    
-    # replies = serializers.SerializerMethodField()
+    variant = VarianSerializer(read_only= True)    
     class Meta:
         model = models.Comment
         fields = [
@@ -27,7 +43,7 @@ class CommentSerializer(serializers.ModelSerializer):
         
 class CommentRatingSerializer(serializers.ModelSerializer):
     # replies = CommentReadOnlySerializer(many= True, read_only=True)
-   
+    variant = VarianSerializer(read_only= True)
     class Meta:
         model = models.Comment
         fields = [

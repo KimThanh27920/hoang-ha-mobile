@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .. import models
+from datetime import date
 User = get_user_model()
 
 class UserUploadImage(serializers.ModelSerializer):
@@ -21,7 +22,22 @@ class UserSerializer(serializers.ModelSerializer):
             "birthday",
             "sex",
         ]
-        
+    def validate_birthday(self, bd): #bd = birthday
+        today = date.today()
+        age = today.year - bd.year
+        if (not(0 < age < 150)):
+            raise serializers.ValidationError("Invalid date of birth")
+        return bd
+    
+    def validate_phone(self, attrs):
+        try: 
+            print(int(attrs))
+            
+            if not(len(attrs) == 10):
+                raise serializers.ValidationError("Invalid phone number: Phone number have to include ten number")
+            return attrs
+        except:
+            raise serializers.ValidationError("Invalid phone number: Don't include characters")
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
