@@ -43,7 +43,19 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'order': {'write_only': True},
         }
-class OrderSerializer(serializers.ModelSerializer):
+class OrderReadSerializer(serializers.ModelSerializer):
+    order_details = OrderDetailReadOnlySerializer(many = True, read_only=True)
+    class Meta:
+        model = models.Order
+        fields = [
+            'id',            
+            'shipping',            
+            'total',
+            'status',
+            'order_details',
+        ]
+
+class OrderWriteSerializer(serializers.ModelSerializer):
     order_details = OrderDetailReadOnlySerializer(many = True, read_only=True)
     class Meta:
         model = models.Order
@@ -59,4 +71,3 @@ class OrderSerializer(serializers.ModelSerializer):
             'status',
             'order_details',
         ]
-        
