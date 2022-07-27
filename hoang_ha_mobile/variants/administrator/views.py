@@ -6,7 +6,8 @@ from rest_framework.response import Response
 
 from .serializers import VariantSerializer, VariantReadSerializer
 from variants.models import Variant
-
+from comments.models import Comment
+from comments.administrator.views import CommentViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import datetime
 
@@ -55,12 +56,22 @@ class VariantViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+    # def perform_destroy(self, instance):
+    #     data = {
+    #         "id": instance.id,
+    #         "deleted_by": self.request.user.id,
+    #         "deleted_at": datetime.now()
+    #     }
+    #     serializer = VariantSerializer(instance=instance, data=data,partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+
     def perform_destroy(self, instance):
-        data = {
-            "id": instance.id,
-            "deleted_by": self.request.user.id,
-            "deleted_at": datetime.now()
-        }
-        serializer = VariantSerializer(instance=instance, data=data,partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        instance.deleted_by = self.request.user 
+        instance.deleted_at = datetime.now()
+        comment_view = CommentViewSet()
+        comment_view.request = self.request
+        comments = Comment.objects.filter(variant=instance)
+        for comment in comments:
+            comment_view.perform_destroy(comment)
+        instance.save()
