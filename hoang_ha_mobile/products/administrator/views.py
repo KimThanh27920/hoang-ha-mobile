@@ -26,6 +26,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     }
 
     queryset = Product.objects.exclude(deleted_at__isnull=False).prefetch_related('variants').select_related('category')
+    #queryset = Product.objects.all().prefetch_related('variants').select_related('category')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     
