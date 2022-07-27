@@ -42,7 +42,7 @@ class Variant(models.Model):
 
     class Meta:
         db_table ='variant'
-        unique_together = ['product','color','version']git pull
+        unique_together = ['product','color','version']
 
     def __str__(self) :
         return self.product.name + " + " + str(self.version) + " + " + str(self.color)

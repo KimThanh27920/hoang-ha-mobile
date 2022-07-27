@@ -2,7 +2,7 @@ from urllib import response
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from .serializers import OrderSerializer, OrderDetailSerializer, CancelOrderSerializer
+from .serializers import OrderSerializer, OrderDetailSerializer, CancelOrderSerializer, ListOrderSerializer
 from ..models import Order, OrderDetail
 from variants.models import Variant
 
@@ -13,13 +13,13 @@ class CreateOrderApiView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         self.queryset = Order.objects.filter(
-            phone=self.request.query_params.get('phone')).prefetch_related()
+            email=self.request.query_params.get('email')).prefetch_related()
         return super().get_queryset()
 
     def get_serializer(self, *args, **kwargs):
-        if(self.request.method == "GET"):
+        if(self.request.method == "POST"):
             return super().get_serializer(*args, **kwargs)
-        return OrderSerializer(*args, **kwargs)
+        return ListOrderSerializer(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         serializer = OrderSerializer(data=request.data.get('order'))
@@ -72,4 +72,3 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
                 return Response(data={"message": "Hông cho bé ơi!"})
         except:
             return Response(data={"detail": "Not Found!"}, status=status.HTTP_404_NOT_FOUND)
-

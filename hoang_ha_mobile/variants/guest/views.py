@@ -14,7 +14,6 @@ class ListVariantOfProductApiView(generics.ListAPIView):
     filterset_fields = ["product__name", "product__id"]
     # filter_backends = [ProductSearchFilter]
     search_fields = ["product__name", "product__category__name"]
-    pagination_class = None
 
 class RetrieveVariantApiView(generics.RetrieveAPIView):
     serializer_class = ReadDetailVarianSerializer
