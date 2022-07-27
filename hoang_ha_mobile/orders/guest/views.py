@@ -29,6 +29,8 @@ class CreateOrderApiView(generics.ListCreateAPIView):
             total = 0
             # print(self.instance.id)
             order_detail = self.request.data.get("order_details")
+            if(len(order_detail) < 1):
+                return Response(data = {"message": "Invalid data"})
             for data in order_detail:
                 variant = Variant.objects.get(id=data.get('variant'))
                 if variant.sale:
