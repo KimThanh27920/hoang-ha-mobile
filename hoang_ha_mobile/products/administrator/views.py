@@ -10,9 +10,11 @@ from django.db.models import Count
 
 from .serializers import ProductSerializer, ProductReadSerializer
 from products.models import Product
+from comments.models import Comment
 from variants.models import Variant
 from variants.administrator.serializers import VariantSerializer
 from datetime import datetime
+from variants.administrator.views import VariantViewSet
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = {
@@ -60,28 +62,27 @@ class ProductViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)
 
+    # def perform_destroy(self, instance):
+    #     data = {
+    #         "name": instance.name,
+    #         "deleted_by": self.request.user.id,
+    #         "deleted_at": datetime.now()
+    #     }
+    #     serializer = ProductSerializer(instance=instance, data=data,partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+
     def perform_destroy(self, instance):
-        data = {
-            "name": instance.name,
-            "deleted_by": self.request.user.id,
-            "deleted_at": datetime.now()
-        }
-        serializer = ProductSerializer(instance=instance, data=data,partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        try:
-            child = Variant.objects.get(product=instance.id)
-            child_data = {
-                "deleted_by": self.request.user.id,
-                "deleted_at": datetime.now()
-            } 
-            child_serializer = VariantSerializer(instance=child, data=child_data, partial=True)
-            child_serializer.is_valid(raise_exception=True)
-            child_serializer.save()
-        except:
-            pass
-
+        instance.deleted_by = self.request.user 
+        instance.deleted_at = datetime.now()
+        instance.name += "/" + str(instance.deleted_at)
+        variants = Variant.objects.filter(product=instance)
+        variant_view = VariantViewSet()
+        variant_view.request = self.request
+        for variant in variants:
+            variant_view.perform_destroy(variant)
+        instance.save()
+        
 
        
 

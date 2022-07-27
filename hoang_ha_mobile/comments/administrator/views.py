@@ -7,7 +7,7 @@ from comments.administrator.permissions import IsOwner, NotEditedForeignKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 class CommentViewSet(ModelViewSet):
-    queryset = Comment.objects.all().select_related()
+    queryset = Comment.objects.filter(deleted_by=None).select_related()
     serializer_class = CommentSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
