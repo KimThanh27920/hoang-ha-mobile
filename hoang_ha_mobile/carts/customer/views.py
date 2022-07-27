@@ -4,44 +4,51 @@ from .. import models
 from rest_framework_simplejwt import authentication
 from .permissions import IsOwner
 
+
+# TODO: @all: check the Code Lay-out here. All spacing between classes, functions must be consistent. See guidelines: https://peps.python.org/pep-0008/.
+
 class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CartReadSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, IsOwner]
-    
-    
-    
+
     def get_queryset(self):
-        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
-        return super().get_queryset() 
-    
+        self.queryset = models.Cart.objects.filter(
+            user=self.request.user.id).select_related()
+        return super().get_queryset()
+
     def post(self, request, *args, **kwargs):
-        id = models.Cart.objects.filter(user = self.request.user.id, variant = int(self.request.data.get('variant')))
+        id = models.Cart.objects.filter(
+            user=self.request.user.id, variant=int(self.request.data.get('variant')))
         if(id.exists()):
             # print(id[0].variant.id)
-           
+
             quantity = request.data.get('quantity') + id[0].quantity
             data = {
                 "variant": request.data.get('variant'),
                 "quantity": quantity
             }
             serializer = serializers.CartWriteSerializer(id[0], data=data)
-            
+
         else:
-            serializer = serializers.CartWriteSerializer(data=self.request.data)
-            
+            serializer = serializers.CartWriteSerializer(
+                data=self.request.data)
+
         if(serializer.is_valid()):
             self.instance = serializer.save(user=self.request.user)
             serializer = serializers.CartReadSerializer(self.instance)
             return response.Response(data=serializer.data)
         else:
             return response.Response(serializer.errors)
-        
+
+
 class CartOwnerUpdateOrDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.CartUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     lookup_url_kwarg = 'cart_id'
+
     def get_queryset(self):
-        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
+        self.queryset = models.Cart.objects.filter(
+            user=self.request.user.id).select_related()
         return super().get_queryset()

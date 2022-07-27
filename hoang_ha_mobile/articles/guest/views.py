@@ -4,12 +4,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from .serializers import ReadArticleSerializer, ListArticleSerializer
 from ..models import Article
+
+
 class ListArticleApiView(generics.ListAPIView):
     serializer_class = ListArticleSerializer
-    queryset = Article.objects.filter(status=True, deleted_by = None).select_related("author").prefetch_related("tags")
+    queryset = Article.objects.filter(status=True, deleted_by=None).select_related(
+        "author").prefetch_related("tags")
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ["title"]
+    # TODO: @Trung: The filter set fields must be usable, it's seem that we only need tags__id or  tags__name.
     filterset_fields = ["tags__id", "tags__name"]
+
 
 class RetrieveApiView(generics.RetrieveAPIView):
     serializer_class = ReadArticleSerializer

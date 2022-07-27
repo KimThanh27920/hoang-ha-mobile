@@ -1,3 +1,4 @@
+# TODO: @all: The code Layout in here look good :). Just handle about imports list. We should follow this styles for all team members. :)
 from itertools import product
 from rest_framework import viewsets, filters, generics
 from rest_framework.permissions import IsAdminUser
