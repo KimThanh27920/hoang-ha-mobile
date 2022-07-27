@@ -18,6 +18,14 @@ class VariantReadInProductSerializer(serializers.ModelSerializer):
             'sale',
         ]
 
+class ListImageProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Variant
+        fields = [
+            "id",
+            'image',
+        ]
+
 class ReadProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -44,18 +52,27 @@ class ShortProductSerializer(serializers.ModelSerializer):
             "category"
         ]
 class ReadDetailProductSerializer(serializers.ModelSerializer):
-    product = ShortProductSerializer()
+    # product = ShortProductSerializer()
 
     # def get_product(self, obj):
     #     print(obj.category)
     #     return obj.id
+    variants = VariantReadInProductSerializer(many=True)
+    # image = serializers.SerializerMethodField()
+
+    # def get_image(self, obj):
+    #     queryset = Variant.objects.filter(product = obj.id)
+    #     serializer = ListImageProductSerializer(queryset, many=True)
+    #     # array = []
+    #     # for image in serializer.data:
+    #     #     array.append(image['image'])
+    #     return serializer.data
     class Meta:
-        model = Variant
+        model = Product
         fields = [
             "id",
-            "product",
-            "version",
-            "price",
-            "sale",
-            "image"
+            "name",
+            "insurance",
+            "variants",
+            "description",
         ]

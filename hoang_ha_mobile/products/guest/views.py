@@ -15,9 +15,8 @@ class ListProductyApiView(generics.ListAPIView):
         return Product.objects.filter(status=True, deleted_by=None, category=self.request.query_params.get('category')).select_related('category')
 
 
-class DetailProductApiView(generics.ListAPIView):
+class DetailProductApiView(generics.RetrieveAPIView):
     serializer_class = ReadDetailProductSerializer
+    queryset = Product.objects.all()
     lookup_url_kwarg = 'product_id'
 
-    def get_queryset(self):
-        return Variant.objects.filter(deleted_by = None, status=True, product = self.kwargs.get('product_id'))
