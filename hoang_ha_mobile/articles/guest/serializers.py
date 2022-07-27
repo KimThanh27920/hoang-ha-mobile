@@ -30,29 +30,25 @@ class ReadArticleSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
-            "description",
-            "content",
             "author",
             "viewers",
             "tags",
+            "image",
+            "content",
             "created_at",
             "updated_at"
         ]
-        depth = 1
 
 class ListArticleSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
     tags = TagSerializer(many=True)
     class Meta:
         model = Article
         fields = [
             "id",
             "title",
+            "image",
             "description",
-            "author",
-            "viewers",
             "tags",
             "created_at",
             "updated_at"
         ]
-        depth = 1

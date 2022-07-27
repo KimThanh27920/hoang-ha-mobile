@@ -1,4 +1,5 @@
 from asyncore import read
+from email.policy import default
 from xml.etree.ElementInclude import default_loader
 from django.forms import ValidationError
 from rest_framework import serializers
@@ -26,9 +27,8 @@ class CommentSerializer(serializers.ModelSerializer):
         queryset = Comment.objects.all(),
         source = "parent",
         write_only = True,
-        default=None
+        default = None
     )
-
     class Meta:
         model = Comment
         fields = [
@@ -50,7 +50,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "deleted_by",
             "deleted_at"
         ]
-        read_only_fields = ["name","email","phone", "parent"]
+        read_only_fields = ["name","email","phone", "parent","rating"]
 
     def get_type(self, obj):
         if obj.rating != 0:

@@ -48,7 +48,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'updated_at',
             'updated_by',
             'deleted_at',
-            'deleted_by',
+            # 'deleted_by',
         ]
   
 #Serializer for POST, PUT, DELETE Product
