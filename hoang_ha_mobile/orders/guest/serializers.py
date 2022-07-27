@@ -1,18 +1,21 @@
 from dataclasses import field
-from pyexpat import model
-import sre_compile
 from rest_framework import serializers
 
 from variants.models import Variant
 from ..models import Order, OrderDetail
 
 class ShortVariantSerializer(serializers.ModelSerializer):
+    product = serializers.StringRelatedField()
     class Meta:
         model = Variant
         fields = [
-            ""
+            "id",
+            "product",
+            "color",
+            "version",
+            "image",
+            "price"
         ]
-
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderDetail
@@ -27,10 +30,19 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "order": {"write_only": True}
         }
 
+class OrderDetailReadSerializer(serializers.ModelSerializer):
+    variant = ShortVariantSerializer()
+    class Meta:
+        model = OrderDetail
+        fields = [
+            'variant',
+            'price',
+            'quantity',
+        ]
 
 class OrderSerializer(serializers.ModelSerializer):
 
-    order_details = OrderDetailSerializer(many=True, read_only=True)
+    order_details = OrderDetailReadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -56,12 +68,15 @@ class CancelOrderSerializer(serializers.ModelSerializer):
 
 class ListOrderSerializer(serializers.ModelSerializer):
 
-    product = serializers.SerializerMethodField()
+    # detail = serializers.SerializerMethodField()
 
-    def get_product(self, obj):
-        queryset = OrderDetail.objects.filter(order = obj.id)
-        serializer = OrderDetailSerializer(queryset, many=True)
-        return serializer.data[0]
+    # def get_detail(self, obj):
+    #     queryset = OrderDetail.objects.filter(order = obj.id)
+    #     serializer = OrderDetailReadSerializer(queryset, many=True)
+    #     print(serializer.data[0])
+    #     return serializer.data[0]
+
+    order_details = OrderDetailReadSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = [
@@ -69,5 +84,5 @@ class ListOrderSerializer(serializers.ModelSerializer):
             'shipping',
             'total',
             'status',
-            'product'
+            'order_details'
         ]

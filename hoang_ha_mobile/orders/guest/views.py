@@ -50,25 +50,39 @@ class CreateOrderApiView(generics.ListCreateAPIView):
             self.instance.save()
             print(self.instance)
             serializer = self.get_serializer(self.instance)
-            return Response(data=serializer.data)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors)
 
 
 class OrderDetailApiView(generics.RetrieveUpdateAPIView):
-    serializer_class = CancelOrderSerializer
+    serializer_class = OrderSerializer
     queryset = Order.objects.all().prefetch_related()
     lookup_url_kwarg = "order_id"
+    
 
     # def update(self, request, *args, **kwargs):
     #     response = super().update(request, *args, **kwargs)
 
+    # def get_serializer(self, *args, **kwargs):
+    #     if(self.request.method == "PUT"):
+    #         return super().get_serializer(*args, **kwargs)
+    #     return OrderSerializer(*args, **kwargs)
+
+
     def update(self, request, *args, **kwargs):
         try:
             data = Order.objects.get(id=self.kwargs['order_id'])
+            print(data)
             if data.status == "Chờ xác nhận":
-                return super().update(request, *args, **kwargs)
+                serializer = self.get_serializer(data, data=request.data, partial=True)
+                serializer.is_valid(raise_exception=True)
+                self.perform_update(serializer)
+                return Response(data=serializer.data)
             else:
-                return Response(data={"message": "Hông cho bé ơi!"})
+                return Response(data={"message": "Not Update!"})
         except:
-            return Response(data={"detail": "Not Found!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={"detail": "Not Found Order!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
