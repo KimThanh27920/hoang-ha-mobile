@@ -22,6 +22,6 @@ class Comment(models.Model):
         db_table = 'comments'
 
     def __str__(self):
-        return str(self.name) + " + " + str(self.rating) + " + " + str(self.product.name)
+        return str(self.name) + " + " + str(self.rating)
     
     
