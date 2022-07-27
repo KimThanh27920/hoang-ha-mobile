@@ -1,3 +1,4 @@
+from os import stat
 from urllib import response
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,12 +26,25 @@ class CreateOrderApiView(generics.ListCreateAPIView):
         serializer = OrderSerializer(data=request.data.get('order'))
 
         if(serializer.is_valid()):
+
+            order_detail = self.request.data.get("order_details")
+            if(len(order_detail) < 1):
+                return Response(data = {"message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+            for data in order_detail:
+                if not (int(data.get('quantity')) > 0): 
+                    return Response(data = {"message": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+
+
             self.instance = serializer.save()
             total = 0
-            # print(self.instance.id)
-            order_detail = self.request.data.get("order_details")
+            # print(self.instance.id) 
+            
             for data in order_detail:
-                variant = Variant.objects.get(id=data.get('variant'))
+                try:
+                    variant = Variant.objects.get(id=data.get('variant'))
+                except:
+                    return Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
                 if variant.sale:
                     price = variant.sale
                     total += int(variant.sale) * int(data.get('quantity'))
@@ -73,14 +87,13 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         try:
             data = Order.objects.get(id=self.kwargs['order_id'])
-            print(data)
             if data.status == "Chờ xác nhận":
                 serializer = self.get_serializer(data, data=request.data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 self.perform_update(serializer)
                 return Response(data=serializer.data)
             else:
-                return Response(data={"message": "Not Update!"})
+                return Response(data={"message": "Not Update!"}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(data={"detail": "Not Found Order!"}, status=status.HTTP_404_NOT_FOUND)
 
