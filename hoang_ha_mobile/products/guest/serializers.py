@@ -58,20 +58,21 @@ class ReadDetailProductSerializer(serializers.ModelSerializer):
     #     print(obj.category)
     #     return obj.id
     variants = VariantReadInProductSerializer(many=True)
-    # image = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
-    # def get_image(self, obj):
-    #     queryset = Variant.objects.filter(product = obj.id)
-    #     serializer = ListImageProductSerializer(queryset, many=True)
-    #     # array = []
-    #     # for image in serializer.data:
-    #     #     array.append(image['image'])
-    #     return serializer.data
+    def get_image(self, obj):
+        queryset = Variant.objects.filter(product = obj.id)
+        serializer = ListImageProductSerializer(queryset, many=True)
+        array = []
+        for image in serializer.data:
+            array.append(image['image'])
+        return array
     class Meta:
         model = Product
         fields = [
             "id",
             "name",
+            "image",
             "insurance",
             "variants",
             "description",
