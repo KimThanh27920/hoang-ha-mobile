@@ -1,4 +1,5 @@
 from turtle import color
+from xml.dom import pulldom
 from django.db import models
 
 from django.contrib.auth import get_user_model
@@ -41,7 +42,7 @@ class Variant(models.Model):
 
     class Meta:
         db_table ='variant'
-        unique_together = ['product','color','version']
+        unique_together = ['product','color','version']git pull
 
     def __str__(self) :
         return self.product.name + " + " + str(self.version) + " + " + str(self.color)
