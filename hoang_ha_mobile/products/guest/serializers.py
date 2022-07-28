@@ -16,7 +16,10 @@ class VariantReadInProductSerializer(serializers.ModelSerializer):
             'version',
             'price',
             'sale',
+            'status',
+            'deleted_by'
         ]
+
 
 class ListImageProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,7 +27,10 @@ class ListImageProductSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             'image',
+            'status',
+            'deleted_by'
         ]
+
 
 class ReadProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,8 +48,10 @@ class ReadProductSerializer(serializers.ModelSerializer):
             "category"
         ]
 
+
 class ShortProductSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
+
     class Meta:
         model = Product
         fields = [
@@ -51,22 +59,38 @@ class ShortProductSerializer(serializers.ModelSerializer):
             "name",
             "category"
         ]
+
+
 class ReadDetailProductSerializer(serializers.ModelSerializer):
     # product = ShortProductSerializer()
 
     # def get_product(self, obj):
     #     print(obj.category)
     #     return obj.id
-    variants = VariantReadInProductSerializer(many=True)
+
+    variants = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
 
     def get_image(self, obj):
-        queryset = Variant.objects.filter(product = obj.id)
+        queryset = Variant.objects.filter(product=obj.id)
         serializer = ListImageProductSerializer(queryset, many=True)
-        array = []
-        for image in serializer.data:
-            array.append(image['image'])
-        return array
+        image = []
+        for data in serializer.data:
+            if(data['status'] == True) and (data['deleted_by'] == None):
+                image.append(data['image'])
+        return image
+
+    def get_variants(self, obj):
+        queryset = Variant.objects.filter(product=obj.id)
+        serializer = VariantReadInProductSerializer(queryset, many=True)
+        variants = []
+        for data in serializer.data:
+            if(data['status'] == True) and (data['deleted_by'] == None):
+                data.pop('status')
+                data.pop('deleted_by')
+                variants.append(data)
+        return variants
+
     class Meta:
         model = Product
         fields = [

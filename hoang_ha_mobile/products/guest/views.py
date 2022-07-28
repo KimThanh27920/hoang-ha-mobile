@@ -15,6 +15,6 @@ class ListProductyApiView(generics.ListAPIView):
 
 class DetailProductApiView(generics.RetrieveAPIView):
     serializer_class = ReadDetailProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.filter(status=True, deleted_by=None)
     lookup_url_kwarg = 'product_id'
 
