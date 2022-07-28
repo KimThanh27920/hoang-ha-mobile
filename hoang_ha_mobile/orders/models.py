@@ -5,6 +5,13 @@ from variants.models import Variant
 
 User = get_user_model()
 
+STATUS_CHOICES = [
+    ("processing", "processing"),
+    ("confirmed", "confirmed"),
+    ("delivering", "delivering"),
+    ("delivered", "delivered"),
+    ("canceled", "canceled"),
+]
 class Order(models.Model):
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=10)
@@ -12,7 +19,7 @@ class Order(models.Model):
     shipping = models.CharField(max_length=255)
     delivery_address = models.CharField(max_length=255)
     note = models.TextField()
-    status = models.CharField(default="Chờ xác nhận", max_length=255)
+    status = models.CharField(default="processing",choices= STATUS_CHOICES,max_length=255)
     total = models.BigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name ="order_created" ,blank=True,null=True)
@@ -31,7 +38,7 @@ class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_details")
     variant = models.ForeignKey(Variant, on_delete=models.CASCADE,related_name="order_variant_details")
     price = models.BigIntegerField()
-    quantity = models.BigIntegerField()
+    quantity = models.IntegerField()
     
 
     class Meta:
