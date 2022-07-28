@@ -13,4 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "birthday",
             "sex",
+            "updated_at",
+            "block_at",
+            "block_by"
         ]
