@@ -21,13 +21,16 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             instance_price = 0
             # print(self.instance.id)
             array_order_detail = self.request.data.get("order_detail")
+            if(len(array_order_detail) < 1): 
+                return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
             for order_detail in array_order_detail:
                 if not (int(order_detail.get('quantity')) > 0): 
-                    return response.Response(data={"Error: Invalid quantity"})
+                    return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
                 try:
                     variant = Variant.objects.get(id=order_detail.get('variant'))
                 except:
                     return response.Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+            for order_detail in array_order_detail:                
                 if(variant.sale > 0):
                     price = variant.sale
                 else:
