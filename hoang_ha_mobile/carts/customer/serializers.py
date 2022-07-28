@@ -1,9 +1,8 @@
 # TODO: @all: Always check the imports list in a consistence format.
-from dataclasses import field
 from rest_framework import serializers
-from .. import models
 from variants.models import Variant
 from products.models import Product
+from .. import models
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:

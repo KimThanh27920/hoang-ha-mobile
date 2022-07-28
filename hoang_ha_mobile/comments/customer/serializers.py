@@ -1,12 +1,13 @@
-
 from rest_framework import serializers
-from .. import models
+
 from variants.models import Variant
+from .. import models
 
 
 class ShortInfoProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField(max_length=255)
+    
     
 class VarianSerializer(serializers.ModelSerializer):
     product = ShortInfoProductSerializer()
@@ -66,12 +67,3 @@ class CommentRatingUpdateSerializer(serializers.ModelSerializer):
             "rating"
         ]
         
-
-        
-# class RatingUpdateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = models.Comment
-#         fields = [
-#             "id",
-#             "rating",
-#         ]
