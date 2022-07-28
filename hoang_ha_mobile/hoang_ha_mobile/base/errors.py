@@ -6,7 +6,7 @@ from variants.models import Variant
 from django.db.models import Q
 
 
-def check_valid_item_card(items):
+def check_valid_item(items):
     if(len(items) < 1): 
         return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
     for item in items:        
