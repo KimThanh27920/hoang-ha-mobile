@@ -65,14 +65,6 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all().prefetch_related()
     lookup_url_kwarg = "order_id"
 
-    # def update(self, request, *args, **kwargs):
-    #     response = super().update(request, *args, **kwargs)
-
-    # def get_serializer(self, *args, **kwargs):
-    #     if(self.request.method == "PUT"):
-    #         return super().get_serializer(*args, **kwargs)
-    #     return OrderSerializer(*args, **kwargs)
-
     def update(self, request, *args, **kwargs):
         try:
             data = Order.objects.get(id=self.kwargs['order_id'])
