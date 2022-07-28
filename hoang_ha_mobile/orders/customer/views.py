@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt import authentication
 
 from variants.models import Variant
-from hoang_ha_mobile.base.errors import check_valid_item_card
+from hoang_ha_mobile.base.errors import check_valid_item
 
 from . import serializers
 from .. import models
@@ -31,7 +31,7 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             #         variant = Variant.objects.get(id=order_detail.get('variant'))
             #     except:
             #         return response.Response(data={"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-            temp = check_valid_item_card(array_order_detail)
+            temp = check_valid_item(array_order_detail)
             if(temp is not None):
                 return temp
             for order_detail in array_order_detail:       
