@@ -7,7 +7,7 @@ from .permissions import IsOwner
 
 # TODO: @all: check the Code Lay-out here. All spacing between classes, functions must be consistent. See guidelines: https://peps.python.org/pep-0008/.
 
-class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
+class CartOwnerListCreateOrUpdateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CartReadSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, IsOwner]
@@ -22,7 +22,7 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
         try:
             id  = models.Cart.objects.filter(user = self.request.user.id, variant = int(self.request.data.get('variant')))
         except:
-            return response.Response(data={"Error": "Lost data"},  status = status.HTTP_400_BAD_REQUEST)
+            return response.Response(data={"Error": "Lost or Wrong data"},  status = status.HTTP_400_BAD_REQUEST)
         if(id.exists()):
             if not (request.data.get('quantity') > 0): 
                return response.Response(data={"Error": "Invalid quantity"},  status = status.HTTP_400_BAD_REQUEST)
@@ -42,7 +42,7 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
             serializer = serializers.CartReadSerializer(self.instance)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return response.Response(serializer.errors)
+            return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CartListAddAPIView(generics.CreateAPIView):
     serializer_class = serializers.CartWriteSerializer
@@ -81,8 +81,9 @@ class CartListAddAPIView(generics.CreateAPIView):
                 serializer = serializers.CartReadSerializer(self.instance)
                 data_return.append(serializer.data)
             else:
-                return response.Response(serializer.errors)
+                return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return response.Response(data=data_return, status=status.HTTP_201_CREATED)
+    
 class CartOwnerUpdateOrDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.CartUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]

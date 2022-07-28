@@ -14,6 +14,7 @@ class CategoryReadInProductSerializer(serializers.ModelSerializer):
             "status",
         ]
 
+
 #Serializer for GET Variant in Product
 class VariantReadInProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +27,7 @@ class VariantReadInProductSerializer(serializers.ModelSerializer):
             'sale',
             'status',
         ]
+
 
 #Serializer for GET LIST Product
 class ProductReadSerializer(serializers.ModelSerializer):
@@ -54,6 +56,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
     def get_variants(self, obj):
         variants = Variant.objects.exclude(deleted_at__isnull=False)
         return VariantReadInProductSerializer(variants, many=True, read_only =True).data
+ 
   
 #Serializer for POST, PUT, DELETE Product
 class ProductSerializer(serializers.ModelSerializer):

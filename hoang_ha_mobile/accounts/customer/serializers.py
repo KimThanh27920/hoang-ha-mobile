@@ -29,15 +29,17 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Invalid date of birth")
         return bd
     
+    def validate_email(self, email):
+        return email.lower()
+    
     def validate_phone(self, attrs):
-        try: 
-            print(int(attrs))
-            
+        try:             
             if not(len(attrs) == 10):
                 raise serializers.ValidationError("Invalid phone number: Phone number have to include ten number")
             return attrs
         except:
             raise serializers.ValidationError("Invalid phone number: Don't include characters")
+        
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

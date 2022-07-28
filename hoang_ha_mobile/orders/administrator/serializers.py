@@ -4,6 +4,7 @@ from orders.models import Order, OrderDetail
 from variants.models import Variant
 from variants.administrator.serializers import ProductReadInVariantSerializer
 
+
 #Serializer for GET Variant in Product
 class VariantReadInOrderSerializer(serializers.ModelSerializer):
     product = ProductReadInVariantSerializer(read_only= True)
@@ -18,6 +19,8 @@ class VariantReadInOrderSerializer(serializers.ModelSerializer):
             'sale',
             'status',
         ]
+
+
 #serializer GET OrderDetail in Order
 class OrderReadDetailSerializer(serializers.ModelSerializer):
     variant = VariantReadInOrderSerializer()
@@ -29,6 +32,7 @@ class OrderReadDetailSerializer(serializers.ModelSerializer):
             'price',
             'quantity',
         ]
+
 
 #serailizer for GET Order
 class OrderReadSerializer(serializers.ModelSerializer):
@@ -52,9 +56,9 @@ class OrderReadSerializer(serializers.ModelSerializer):
             'updated_by',
             # 'deleted_at',
             # 'deleted_by',
-            
-
         ]
+
+
 #serailizer for GET Retrieve Order
 class OrderRetrieveSerializer(serializers.ModelSerializer):
     order_details = OrderReadDetailSerializer(many=True, read_only=True)
@@ -102,6 +106,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'deleted_by',
 
         ]
+
+
 #serializer for POST,PUT, DELETE Order Detail 
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,4 +120,3 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             'quantity',
            
         ]
-#
