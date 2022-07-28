@@ -4,6 +4,7 @@ from rest_framework import serializers
 from variants.models import Variant
 from products.models import Product
 
+
 #serializer for GET Product in Variant
 class ProductReadInVariantSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
@@ -17,6 +18,7 @@ class ProductReadInVariantSerializer(serializers.ModelSerializer):
             'category',
             'status',
         ]
+
 
 #serializer for GET Variant
 class VariantReadSerializer(serializers.ModelSerializer):
@@ -50,6 +52,7 @@ class VariantReadSerializer(serializers.ModelSerializer):
             #'deleted_at',
             # 'deleted_by', 
         ]
+
 
 #Serializer for POST, PUT, DELETE Variant
 class VariantSerializer(serializers.ModelSerializer):

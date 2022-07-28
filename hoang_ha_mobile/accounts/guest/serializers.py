@@ -38,6 +38,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         email = value.lower()
+        
         # TODO: What happen in case email is already existed.
         return email
 
