@@ -22,6 +22,7 @@ from django.contrib.auth import get_user_model
 # Create your views here.
 User = get_user_model()
 
+
 class LoginApiView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -31,10 +32,11 @@ class LoginApiView(TokenObtainPairView):
 
 class RegisterApiView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
-        
+
     def create(self, request, *args, **kwargs):
         request.data['email'] = request.data.get('email').lower()
         return super().create(request, *args, **kwargs)
+
 
 class ForgotPasswordApiView(APIView):
 
@@ -45,27 +47,30 @@ class ForgotPasswordApiView(APIView):
             'pin': pin
         }
         # Tạo hoặc làm mới mã pin
+        # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         try:
-            pin_user = Pin.objects.get(user = user.id)
+            pin_user = Pin.objects.get(user=user.id)
             serializer = PinSerializer(instance=pin_user, data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
         except:
             serializer = PinSerializer(data=data)
             serializer.is_valid(raise_exception=True)
-            serializer.save() 
+            serializer.save()
         return pin
 
     def post(self, request):
+        # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         try:
             user = User.objects.get(email=request.data["email"].lower())
         except:
             return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
         pin_code = self.create_pin(user)
         print(pin_code)
 
-        html_content = render_to_string("index.html", {'fullname': user.full_name, 'pin': pin_code})
+        html_content = render_to_string(
+            "index.html", {'fullname': user.full_name, 'pin': pin_code})
         send_mail(
             subject='E-Commerce - Forgot Password',
             message='Mật khẩu mới nè cha nội',
@@ -75,8 +80,9 @@ class ForgotPasswordApiView(APIView):
         )
         return Response({"message": "Send email completed"})
 
+
 class ChangePasswordWithPINApiView(APIView):
-    
+
     def disable_pin(self):
         self.pin.delete()
 
@@ -84,6 +90,7 @@ class ChangePasswordWithPINApiView(APIView):
 
         serializers = ChangePasswordWithPinSerializer(data=request.data)
         serializers.is_valid(raise_exception=True)
+        # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         try:
             self.user = User.objects.get(email = request.data['email'].lower())
             self.pin = Pin.objects.get(user = self.user.id)
@@ -92,8 +99,9 @@ class ChangePasswordWithPINApiView(APIView):
                 self.user.set_password(request.data['new_password'])
                 self.user.save()
                 self.disable_pin()
-                return Response(data={"message" : "Change password is success"}, status=status.HTTP_200_OK)
+                return Response(data={"message": "Change password is success"}, status=status.HTTP_200_OK)
             else:
-                return Response(data={"message" : "Is valid PIN code"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={"message": "Is valid PIN code"}, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(data = {'message': "Account not found or No forgot password"}, status=status.HTTP_400_BAD_REQUEST)
+            # TODO: @Trung: All status_code types must be consistent in all APIs.
+            return Response(data={'message': "Account not found or No forgot password"}, status=status.HTTP_400_BAD_REQUEST)

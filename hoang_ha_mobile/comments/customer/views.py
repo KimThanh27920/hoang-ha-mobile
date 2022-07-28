@@ -46,6 +46,7 @@ class RatingAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):        
         rate = models.Comment.objects.filter(~Q(rating=0), created_by=self.request.user.id, variant=self.request.data.get('variant'))
         if(rate.exists()):    
+            # TODO: @Toan: All error should be managed in a base/errors.py for all errors of platforms to easier maintain later. Should not use magic errors in all codes.
             return response.Response(data={"detail": "Rating existed, Can't create new instance"}, status=status.HTTP_404_NOT_FOUND)
         return super().create(request, *args, **kwargs)
     

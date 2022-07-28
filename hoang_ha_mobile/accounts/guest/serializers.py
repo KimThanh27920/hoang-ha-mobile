@@ -14,7 +14,6 @@ User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
 
-
     class Meta:
         model = User
         fields = [
@@ -27,18 +26,20 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password": {"write_only": True}
         }
 
-    def validate_phone(self, value):    
+    def validate_phone(self, value):
         try:
             int(value)
             if (len(value) != 10):
-                raise serializers.ValidationError("phone number is not available")
+                raise serializers.ValidationError(
+                    "phone number is not available")
             return value
         except:
             raise serializers.ValidationError("phone number is not available")
-    
+
     def validate_email(self, value):
         email = value.lower()
-        return email    
+        # TODO: What happen in case email is already existed.
+        return email
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -46,7 +47,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
 
     def get_token(cls, user):
         token = super().get_token(user)
@@ -70,6 +70,7 @@ class ChangePasswordWithPinSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     pin = serializers.IntegerField(required=True)
     new_password = serializers.CharField(required=True)
+
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:

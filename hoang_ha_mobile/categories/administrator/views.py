@@ -24,6 +24,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
                         created_by=self.request.user)
 
     def list(self, request, *args, **kwargs):
+        # TODO: @all: in case we use a same generaal logic for all methods like LIST here. We should make BaseListView which contain a LIST method to reuse in all ones. Don't duplicate codes.
         is_paginate = bool(request.query_params.get("paginate",False) == 'true')
         if is_paginate:
             return super().list(request, *args, **kwargs)

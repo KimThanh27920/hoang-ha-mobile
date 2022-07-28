@@ -6,8 +6,9 @@ from accounts.administrator.serializers import UserSerializer
 from accounts.models import CustomUser as User
 from rest_framework.validators import UniqueTogetherValidator
 
+
 class TagSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Tag
         fields = [
@@ -21,10 +22,12 @@ class TagSerializer(serializers.ModelSerializer):
             "deleted_at",
         ]
 
+
 class ArticleRetrieveSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer()
     updated_by = UserSerializer()
+
     class Meta:
         model = Article
         fields = [
@@ -36,17 +39,20 @@ class ArticleRetrieveSerializer(serializers.ModelSerializer):
             "status",
             "tags",
             "content",
+            "image",
             "created_at",
             "updated_by",
             "updated_at"
         ]
 
+
 class ArticleSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     updated_by = UserSerializer(read_only=True)
     tag_ids = serializers.PrimaryKeyRelatedField(
-        queryset = Tag.objects.all(), many=True, source = "tags", write_only=True
-    ) 
+        queryset=Tag.objects.all(), many=True, source="tags", write_only=True
+    )
+
     class Meta:
         model = Article
         fields = [
@@ -58,15 +64,17 @@ class ArticleSerializer(serializers.ModelSerializer):
             "tag_ids",
             "content",
             "status",
+            "image",
             "created_at",
             "updated_by",
             "updated_at",
         ]
-    
+
         validators = [
+            # TODO: @Bang: Article titles can be duplicate, we don't need this validator.
             UniqueTogetherValidator(
-                queryset = Article.objects.filter(deleted_by = None),
-                fields = ["title"]
+                queryset=Article.objects.filter(deleted_by=None),
+                fields=["title"]
             )
         ]
 
@@ -77,4 +85,3 @@ class ArticleSerializer(serializers.ModelSerializer):
             instance.content = limit_content
             instance.content += "..."
         return super().to_representation(instance)
-    

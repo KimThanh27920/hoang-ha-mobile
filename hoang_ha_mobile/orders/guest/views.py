@@ -87,7 +87,7 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         try:
             data = Order.objects.get(id=self.kwargs['order_id'])
-            if data.status == "Chờ xác nhận":
+            if data.status == "processing":
                 serializer = self.get_serializer(data, data=request.data, partial=True)
                 serializer.is_valid(raise_exception=True)
                 self.perform_update(serializer)
