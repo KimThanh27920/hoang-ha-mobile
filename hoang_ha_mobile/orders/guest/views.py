@@ -14,7 +14,7 @@ class CreateOrderApiView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         self.queryset = Order.objects.filter(
-            email=self.request.query_params.get('email')).prefetch_related()
+            email=self.request.query_params.get('email').lower()).prefetch_related()
         return super().get_queryset()
 
     def get_serializer(self, *args, **kwargs):
@@ -23,8 +23,8 @@ class CreateOrderApiView(generics.ListCreateAPIView):
         return ListOrderSerializer(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        request.data['order']['email'] = request.data['order'].get('email').lower()
         serializer = OrderSerializer(data=request.data.get('order'))
-
         if(serializer.is_valid()):
 
             order_detail = self.request.data.get("order_details")
@@ -43,7 +43,7 @@ class CreateOrderApiView(generics.ListCreateAPIView):
                 try:
                     variant = Variant.objects.get(id=data.get('variant'))
                 except:
-                    return Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+                    return Response(data={"detail": "Variant not found"}, status=status.HTTP_404_NOT_FOUND)
 
                 if variant.sale:
                     price = variant.sale
@@ -62,7 +62,6 @@ class CreateOrderApiView(generics.ListCreateAPIView):
                     serializer.save()
             self.instance.total = total
             self.instance.save()
-            print(self.instance)
             serializer = self.get_serializer(self.instance)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
