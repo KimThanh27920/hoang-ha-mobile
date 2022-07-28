@@ -37,7 +37,7 @@ class CreateOrderApiView(generics.ListCreateAPIView):
             # print(self.instance.id)
             for data in order_detail:
                 try:
-                    variant = Variant.objects.get(id=data.get('variant'))
+                    variant = Variant.objects.get(id=data.get('variant'), status=True, deleted_by=None)
                 except:
                     return Response(data={"detail": "Variant not found"}, status=status.HTTP_404_NOT_FOUND)
 
