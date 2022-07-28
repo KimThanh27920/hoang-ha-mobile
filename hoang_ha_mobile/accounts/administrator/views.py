@@ -5,7 +5,10 @@ from .serializers import UserSerializer
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
 class UserListView(generics.ListAPIView):
+    # TODO: Admin should have options to search, filter, ordering. See guideline: https://www.django-rest-framework.org/api-guide/filtering/#djangofilterbackend.
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = UserSerializer

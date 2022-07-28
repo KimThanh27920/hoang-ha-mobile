@@ -4,6 +4,9 @@ from .. import models
 from rest_framework_simplejwt import authentication
 from .permissions import IsOwner
 
+
+# TODO: @all: check the Code Lay-out here. All spacing between classes, functions must be consistent. See guidelines: https://peps.python.org/pep-0008/.
+
 class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CartReadSerializer
     authentication_classes = [authentication.JWTAuthentication]
@@ -11,9 +14,10 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
     pagination_class = None    
     
     def get_queryset(self):
-        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
-        return super().get_queryset() 
-    
+        self.queryset = models.Cart.objects.filter(
+            user=self.request.user.id).select_related()
+        return super().get_queryset()
+
     def post(self, request, *args, **kwargs):
         try:
             id  = models.Cart.objects.filter(user = self.request.user.id, variant = int(self.request.data.get('variant')))
@@ -28,10 +32,11 @@ class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
                 "quantity": quantity
             }
             serializer = serializers.CartWriteSerializer(id[0], data=data)
-            
+
         else:
-            serializer = serializers.CartWriteSerializer(data=self.request.data)
-            
+            serializer = serializers.CartWriteSerializer(
+                data=self.request.data)
+
         if(serializer.is_valid()):
             self.instance = serializer.save(user=self.request.user)
             serializer = serializers.CartReadSerializer(self.instance)
@@ -84,6 +89,8 @@ class CartOwnerUpdateOrDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
     lookup_url_kwarg = 'cart_id'
+
     def get_queryset(self):
-        self.queryset = models.Cart.objects.filter(user = self.request.user.id).select_related()
+        self.queryset = models.Cart.objects.filter(
+            user=self.request.user.id).select_related()
         return super().get_queryset()
