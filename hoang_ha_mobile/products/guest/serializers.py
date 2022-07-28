@@ -1,9 +1,9 @@
 
 from rest_framework import serializers
 
-from ..models import Product
-from categories.guest.serializers import ReadCategorySerializer
 from variants.models import Variant
+
+from ..models import Product
 
 
 class VariantReadInProductSerializer(serializers.ModelSerializer):
@@ -67,7 +67,6 @@ class ReadDetailProductSerializer(serializers.ModelSerializer):
     # def get_product(self, obj):
     #     print(obj.category)
     #     return obj.id
-
     variants = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
 

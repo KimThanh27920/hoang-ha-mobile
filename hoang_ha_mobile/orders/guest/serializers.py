@@ -1,11 +1,13 @@
-from dataclasses import field
+
 from rest_framework import serializers
 
 from variants.models import Variant
 from ..models import Order, OrderDetail
 
+
 class ShortVariantSerializer(serializers.ModelSerializer):
     product = serializers.StringRelatedField()
+
     class Meta:
         model = Variant
         fields = [
@@ -16,6 +18,8 @@ class ShortVariantSerializer(serializers.ModelSerializer):
             "image",
             "price"
         ]
+
+
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderDetail
@@ -30,8 +34,10 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "order": {"write_only": True}
         }
 
+
 class OrderDetailReadSerializer(serializers.ModelSerializer):
     variant = ShortVariantSerializer()
+
     class Meta:
         model = OrderDetail
         fields = [
@@ -40,9 +46,19 @@ class OrderDetailReadSerializer(serializers.ModelSerializer):
             'quantity',
         ]
 
-class OrderSerializer(serializers.ModelSerializer):
 
+class OrderSerializer(serializers.ModelSerializer):
     order_details = OrderDetailReadSerializer(many=True, read_only=True)
+
+    def validate_phone(self, value):
+        try:
+            int(value)
+            if (len(value) != 10):
+                raise serializers.ValidationError(
+                    "phone number is not available")
+            return value
+        except:
+            raise serializers.ValidationError("phone number is not available")
 
     class Meta:
         model = Order
@@ -59,6 +75,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'order_details',
         ]
 
+
 class CancelOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
@@ -66,8 +83,8 @@ class CancelOrderSerializer(serializers.ModelSerializer):
             'status'
         ]
 
-class ListOrderSerializer(serializers.ModelSerializer):
 
+class ListOrderSerializer(serializers.ModelSerializer):
     # detail = serializers.SerializerMethodField()
 
     # def get_detail(self, obj):
@@ -75,8 +92,8 @@ class ListOrderSerializer(serializers.ModelSerializer):
     #     serializer = OrderDetailReadSerializer(queryset, many=True)
     #     print(serializer.data[0])
     #     return serializer.data[0]
-
     order_details = OrderDetailReadSerializer(many=True, read_only=True)
+
     class Meta:
         model = Order
         fields = [
