@@ -104,4 +104,4 @@ class ChangePasswordWithPINApiView(APIView):
                 return Response(data={"message": "Is valid PIN code"}, status=status.HTTP_400_BAD_REQUEST)
         except:
             # TODO: @Trung: All status_code types must be consistent in all APIs.
-            return Response(data={'message': "Account not found or No forgot password"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'message': "Account not found or No forgot password"}, status=status.HTTP_404_NOT_FOUND)
