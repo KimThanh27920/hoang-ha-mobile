@@ -45,11 +45,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def get_token(cls, user):
         token = super().get_token(user)
-
         # Add custom claims
         token['email'] = user.email
         # ...
-
         return token
 
 
@@ -60,13 +58,6 @@ class PinSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordWithPinSerializer(serializers.Serializer):
-
     email = serializers.EmailField(required=True)
     pin = serializers.IntegerField(required=True)
     new_password = serializers.CharField(required=True)
-
-
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Address
-        fields = ["street", "ward", "district", "province"]

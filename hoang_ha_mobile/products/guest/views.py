@@ -1,11 +1,12 @@
 
 from rest_framework import generics
+
 from .serializers import ReadProductSerializer, ReadDetailProductSerializer
 from ..models import Product
-from variants.models import Variant
 
 
-class ListProductyApiView(generics.ListAPIView):
+
+class ListProductApiView(generics.ListAPIView):
     serializer_class = ReadProductSerializer
     pagination_class = None
 
@@ -17,4 +18,3 @@ class DetailProductApiView(generics.RetrieveAPIView):
     serializer_class = ReadDetailProductSerializer
     queryset = Product.objects.filter(status=True, deleted_by=None)
     lookup_url_kwarg = 'product_id'
-

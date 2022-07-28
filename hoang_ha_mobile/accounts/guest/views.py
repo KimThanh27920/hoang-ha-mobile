@@ -30,6 +30,7 @@ class LoginApiView(TokenObtainPairView):
         request.data['email'] = request.data.get('email').lower()
         return super().post(request, *args, **kwargs)
 
+
 class RegisterApiView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
@@ -49,7 +50,7 @@ class ForgotPasswordApiView(APIView):
         # Tạo hoặc làm mới mã pin
         # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         # try:
-        #     pin_user = 
+        #     pin_user =
         #     serializer = PinSerializer(instance=pin_user, data=data)
         # except:
         #     serializer = PinSerializer(data=data)
@@ -63,7 +64,7 @@ class ForgotPasswordApiView(APIView):
         return pin
 
     def post(self, request):
-        # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.     
+        # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         user = get_object_or_404(User, email=request.data["email"].lower())
         pin_code = self.create_pin(user)
         html_content = render_to_string(
@@ -89,8 +90,9 @@ class ChangePasswordWithPINApiView(APIView):
         serializers.is_valid(raise_exception=True)
         # TODO: @Trung: Never use try/except in the views even if we truly need it. Only need to use if/else.
         # try:
-        self.user = get_object_or_404(User, email = request.data['email'].lower())
-        self.pin = get_object_or_404(Pin, user = self.user.id)
+        self.user = get_object_or_404(
+            User, email=request.data['email'].lower())
+        self.pin = get_object_or_404(Pin, user=self.user.id)
 
         if int(request.data['pin']) == int(self.pin.pin):
             self.user.set_password(request.data['new_password'])

@@ -1,7 +1,8 @@
 from rest_framework import generics
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .serializers import ReadArticleSerializer, ListArticleSerializer
 from ..models import Article
 
@@ -18,7 +19,8 @@ class ListArticleApiView(generics.ListAPIView):
 
 class RetrieveApiView(generics.RetrieveAPIView):
     serializer_class = ReadArticleSerializer
-    queryset = Article.objects.filter(status=True, deleted_by=None).select_related("author")
+    queryset = Article.objects.filter(
+        status=True, deleted_by=None).select_related("author")
     lookup_url_kwarg = "article_id"
 
     def retrieve(self, request, *args, **kwargs):

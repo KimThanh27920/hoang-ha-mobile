@@ -1,13 +1,16 @@
-from itertools import product
+
 from rest_framework import serializers
 from ..models import Variant
-from products.guest.serializers import ReadProductSerializer
+
 
 class ShortInfoProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField(max_length=255)
+
+
 class ReadVarianSerializer(serializers.ModelSerializer):
     product = ShortInfoProductSerializer()
+
     class Meta:
         model = Variant
         fields = [

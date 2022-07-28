@@ -1,9 +1,7 @@
-from dataclasses import field
-from email.policy import default
-from multiprocessing import parent_process
-from rest_framework import serializers
-from ..models import Comment
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+from ..models import Comment
 
 User = get_user_model()
 
@@ -61,7 +59,7 @@ class CommentSerializer(serializers.ModelSerializer):
             return value
         except:
             raise serializers.ValidationError("phone number is not available")
-    
+
     class Meta:
         model = Comment
         fields = [

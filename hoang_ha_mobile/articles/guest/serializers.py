@@ -1,10 +1,9 @@
 
-from dataclasses import field
-from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
+from accounts.models import CustomUser
 from ..models import Article, Tag
 
-from accounts.models import CustomUser
+
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
