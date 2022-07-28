@@ -1,6 +1,4 @@
-from ast import Delete
-from multiprocessing import set_forkserver_preload
-from unicodedata import category
+
 from rest_framework import generics
 from .serializers import ReadProductSerializer, ReadDetailProductSerializer
 from ..models import Product
