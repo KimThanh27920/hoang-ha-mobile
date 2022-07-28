@@ -4,14 +4,10 @@ from .. import models
 from rest_framework_simplejwt import authentication
 from .permissions import IsOwner
 
-<<<<<<< HEAD
-class CartOwnerListCreateOrUpdateAPIView(generics.ListCreateAPIView):
-=======
 
 # TODO: @all: check the Code Lay-out here. All spacing between classes, functions must be consistent. See guidelines: https://peps.python.org/pep-0008/.
 
-class CartOwnerCreateOrUpdateAPIView(generics.ListCreateAPIView):
->>>>>>> bd833b4031517448b6f30e2088c09dbe439efbb4
+class CartOwnerListCreateOrUpdateAPIView(generics.ListCreateAPIView):
     serializer_class = serializers.CartReadSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated, IsOwner]
