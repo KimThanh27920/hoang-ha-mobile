@@ -15,19 +15,22 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
         return super().get_queryset()    
     
     def post(self, request, *args, **kwargs):
-        serializer = serializers.OrderWriteSerializer(data=request.data.get('order'))            
+        serializer = serializers.OrderSerializer(data=request.data.get('order'))            
         if(serializer.is_valid()):            
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
             # print(self.instance.id)
             array_order_detail = self.request.data.get("order_detail")
+            if(len(array_order_detail) < 1): 
+                return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
             for order_detail in array_order_detail:
                 if not (int(order_detail.get('quantity')) > 0): 
-                    return response.Response(data={"Error: Invalid quantity"})
+                    return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
                 try:
                     variant = Variant.objects.get(id=order_detail.get('variant'))
                 except:
                     return response.Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+            for order_detail in array_order_detail:                
                 if(variant.sale > 0):
                     price = variant.sale
                 else:
@@ -46,8 +49,14 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             self.instance.save()
             # print(self.instance)
             # serializer = self.get_serializer(self.instance)
-            serializer = serializers.OrderWriteSerializer(self.instance)
-            # serializer = serializers.OrderDetailReadOnlySerializer(self.instance)
+            serializer = serializers.OrderSerializer(self.instance)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors)
+
+
+# class ListOrderOwner(generics.ListAPIView):
+#     serializer_class = serializers.OrderSerializer
+#     def get_queryset(self):
+#         self.queryset = models.Order.objects.filter(created_by = self.request.user.id)
+#         return super().get_queryset()
