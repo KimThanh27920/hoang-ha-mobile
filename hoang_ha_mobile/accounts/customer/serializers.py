@@ -52,7 +52,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Address
-        fields = ["id", "street", "ward", "district", "province"]
+        fields = ["id", "address"]
 
 class ProfileSerializer(serializers.ModelSerializer):
     addresses = AddressSerializer(many=True)

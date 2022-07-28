@@ -61,10 +61,7 @@ class CustomUser(AbstractUser):
         return self.email
 
 class Address(models.Model): #/api address google address autocomplete
-    street = models.CharField(max_length=255)  #textField /api address 
-    ward = models.CharField(max_length=255)
-    district = models.CharField(max_length=255)
-    province = models.CharField(max_length=255)
+    address = models.TextField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="addresses")
    
     class Meta:
