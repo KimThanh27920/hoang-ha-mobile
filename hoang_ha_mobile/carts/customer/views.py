@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt import authentication
 
+from hoang_ha_mobile.base.errors import check_valid_item_card
 from .permissions import IsOwner
 from . import serializers
 from .. import models
@@ -57,11 +58,14 @@ class CartListAddAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         items = self.request.data.get('items')
-        if(len(items) < 1):
-            return response.Response(data={"Error: Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-        for item in items:
-            if not (item.get('quantity') > 0):
-                return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+        # if(len(items) < 1):
+        #     return response.Response(data={"Error: Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+        # for item in items:
+        #     if not (item.get('quantity') > 0):
+        #         return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+        temp = check_valid_item_card(items)
+        if(temp is not None):
+            return temp
         data_return = []
         for item in items:
             id = models.Cart.objects.filter(
