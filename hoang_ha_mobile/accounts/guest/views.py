@@ -25,6 +25,10 @@ User = get_user_model()
 class LoginApiView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+    def post(self, request, *args, **kwargs):
+        request.data['email'] = request.data.get('email').lower()
+        return super().post(request, *args, **kwargs)
+
 class RegisterApiView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
         
@@ -54,7 +58,7 @@ class ForgotPasswordApiView(APIView):
 
     def post(self, request):
         try:
-            user = User.objects.get(email=request.data["email"])
+            user = User.objects.get(email=request.data["email"].lower())
         except:
             return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -81,7 +85,7 @@ class ChangePasswordWithPINApiView(APIView):
         serializers = ChangePasswordWithPinSerializer(data=request.data)
         serializers.is_valid(raise_exception=True)
         try:
-            self.user = User.objects.get(email = request.data['email'])
+            self.user = User.objects.get(email = request.data['email'].lower())
             self.pin = Pin.objects.get(user = self.user.id)
 
             if int(request.data['pin']) == int(self.pin.pin):
