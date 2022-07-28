@@ -40,6 +40,7 @@ class ReadDetailCategorySerializer(serializers.ModelSerializer):
             "id",
             "product",
             "version",
+            "color",
             "price",
             "sale",
             "image"

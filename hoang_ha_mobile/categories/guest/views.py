@@ -1,3 +1,4 @@
+from ast import Delete
 from rest_framework import generics, views, response
 
 from .serializers import ReadCategorySerializer, ReadDetailCategorySerializer
@@ -10,7 +11,7 @@ from variants.models import Variant
 
 class ListCategoryApiView(generics.ListAPIView):
     serializer_class = ReadCategorySerializer
-    queryset = Category.objects.filter(status=True)
+    queryset = Category.objects.filter(status=True, deleted_by=None)
     pagination_class = None
 
 
