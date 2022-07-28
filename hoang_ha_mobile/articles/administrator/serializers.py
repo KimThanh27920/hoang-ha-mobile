@@ -36,6 +36,7 @@ class ArticleRetrieveSerializer(serializers.ModelSerializer):
             "status",
             "tags",
             "content",
+            "image",
             "created_at",
             "updated_by",
             "updated_at"
