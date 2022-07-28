@@ -1,12 +1,16 @@
 # TODO: @all: The code Layout in here look good :). Just handle about imports list. We should follow this styles for all team members. :)
+# Django rest framework imports
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+# Django imports
 from django.db.models import Sum
+# Application imports
 from .serializers import OrderSerializer,OrderReadSerializer ,OrderRetrieveSerializer
 from orders.models import Order
+# Python import
 from datetime import datetime
 
 

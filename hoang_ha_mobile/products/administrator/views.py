@@ -1,13 +1,17 @@
+# Django rest framework imports
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+# Django imports
 from django.db.models import Count
+# Applications import
 from .serializers import ProductSerializer, ProductReadSerializer
 from products.models import Product
 from variants.models import Variant
 from variants.administrator.views import VariantViewSet
+# Python imports
 from datetime import datetime
 
 

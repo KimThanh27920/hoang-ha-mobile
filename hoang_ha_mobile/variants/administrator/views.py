@@ -1,12 +1,15 @@
+# Django rest framework imports
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+#Applications imports
 from .serializers import VariantSerializer, VariantReadSerializer
 from variants.models import Variant
 from comments.models import Comment
 from comments.administrator.views import CommentViewSet
+# Python imports
 from datetime import datetime
 
 
