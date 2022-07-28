@@ -13,12 +13,12 @@ class ListArticleApiView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ["title"]
     # TODO: @Trung: The filter set fields must be usable, it's seem that we only need tags__id or  tags__name.
-    filterset_fields = ["tags__id", "tags__name"]
+    filterset_fields = ["tags__name"]
 
 
 class RetrieveApiView(generics.RetrieveAPIView):
     serializer_class = ReadArticleSerializer
-    queryset = Article.objects.filter(status=True)
+    queryset = Article.objects.filter(status=True, deleted_by=None).select_related("author")
     lookup_url_kwarg = "article_id"
 
     def retrieve(self, request, *args, **kwargs):
