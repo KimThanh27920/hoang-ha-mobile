@@ -36,6 +36,7 @@ class ArticleRetrieveSerializer(serializers.ModelSerializer):
             "status",
             "tags",
             "content",
+            "image",
             "created_at",
             "updated_by",
             "updated_at"
@@ -58,6 +59,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "tag_ids",
             "content",
             "status",
+            "image",
             "created_at",
             "updated_by",
             "updated_at",

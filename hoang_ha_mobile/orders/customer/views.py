@@ -29,7 +29,7 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
                 try:
                     variant = Variant.objects.get(id=order_detail.get('variant'))
                 except:
-                    return response.Response(data={"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+                    return response.Response(data={"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
             for order_detail in array_order_detail:                
                 if(variant.sale > 0):
                     price = variant.sale
@@ -52,7 +52,7 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             serializer = serializers.OrderSerializer(self.instance)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return response.Response(serializer.errors)
+            return response.Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
 
 
 # class ListOrderOwner(generics.ListAPIView):
