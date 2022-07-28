@@ -19,7 +19,6 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
         if(serializer.is_valid()):            
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
-            # print(self.instance.id)
             array_order_detail = self.request.data.get("order_detail")
             if(len(array_order_detail) < 1): 
                 return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)

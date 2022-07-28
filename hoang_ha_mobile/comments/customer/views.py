@@ -8,7 +8,7 @@ from rest_framework_simplejwt import authentication
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 
-class CommentListOwner(generics.ListCreateAPIView):
+class CommentListCreateOwner(generics.ListCreateAPIView):
     serializer_class = serializers.CommentSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -17,15 +17,14 @@ class CommentListOwner(generics.ListCreateAPIView):
     filterset_fields = ['variant']
     def get_queryset(self):               
         self.queryset = models.Comment.objects.filter(created_by = self.request.user.id, rating=0)
-            
         return super().get_queryset()
+    
     def create(self, request, *args, **kwargs):
         comment_instance = models.Comment.objects.filter(variant = self.request.data.get('variant'), id=self.request.data.get('parent'))
         if(comment_instance.exists()):
             return super().create(request, *args, **kwargs)
         else:
             return response.Response(data={"detail": "Comment failed,Error: Different variant or comment parent, Can't create new instance"}, status=status.HTTP_404_NOT_FOUND)
-    
     
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, updated_by=self.request.user)
