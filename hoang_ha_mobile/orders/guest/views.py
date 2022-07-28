@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework import generics
 
 from variants.models import Variant
+from hoang_ha_mobile.base.errors import check_valid_item_card
 from .serializers import OrderSerializer, OrderDetailSerializer, ListOrderSerializer
 from ..models import Order
 
@@ -24,23 +25,29 @@ class CreateOrderApiView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         request.data['order']['email'] = request.data['order'].get(
             'email').lower()
+        
+        order_detail = self.request.data.get("order_details")
+        temp = check_valid_item_card(order_detail)
+        if(temp is not None):
+            return temp
+
         serializer = OrderSerializer(data=request.data.get('order'))
         if(serializer.is_valid()):
-            order_detail = self.request.data.get("order_details")
-            if(len(order_detail) < 1):
-                return Response(data={"message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-            for data in order_detail:
-                if not (int(data.get('quantity')) > 0):
-                    return Response(data={"message": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+            # order_detail = self.request.data.get("order_details")
+            # if(len(order_detail) < 1):
+            #     return Response(data={"message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
+            # for data in order_detail:
+            #     if not (int(data.get('quantity')) > 0):
+            #         return Response(data={"message": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
             self.instance = serializer.save()
             total = 0
             # print(self.instance.id)
             for data in order_detail:
-                try:
-                    variant = Variant.objects.get(id=data.get('variant'), status=True, deleted_by=None)
-                except:
-                    return Response(data={"detail": "Variant not found"}, status=status.HTTP_404_NOT_FOUND)
-
+                # try:
+                #     variant = Variant.objects.get(id=data.get('variant'), status=True, deleted_by=None)
+                # except:
+                #     return Response(data={"detail": "Variant not found"}, status=status.HTTP_404_NOT_FOUND)
+                variant = Variant.objects.get(id=data.get('variant'), status=True, deleted_by=None)
                 if variant.sale:
                     price = variant.sale
                     total += int(variant.sale) * int(data.get('quantity'))

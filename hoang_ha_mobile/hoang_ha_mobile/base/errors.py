@@ -11,7 +11,7 @@ def check_valid_item_card(items):
         return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
     for item in items:        
         if not (int(item.get('quantity')) > 0): 
-            return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
+            return response.Response(data={"Error": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
         variant = Variant.objects.filter(id = item.get('variant'), status=True, deleted_by=None)
         if not(variant.exists()): 
             return response.Response(data={"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
