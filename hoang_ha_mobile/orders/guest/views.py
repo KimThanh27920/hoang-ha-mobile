@@ -1,9 +1,11 @@
+from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 
 from variants.models import Variant
+from hoang_ha_mobile.base.errors import check_valid_item
 from .serializers import OrderSerializer, OrderDetailSerializer, ListOrderSerializer
 from ..models import Order
 
@@ -24,23 +26,19 @@ class CreateOrderApiView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         request.data['order']['email'] = request.data['order'].get(
             'email').lower()
+
+        order_detail = self.request.data.get("order_details")
+        items = check_valid_item(order_detail)
+        if(items is not None):
+            return items
+
         serializer = OrderSerializer(data=request.data.get('order'))
         if(serializer.is_valid()):
-            order_detail = self.request.data.get("order_details")
-            if(len(order_detail) < 1):
-                return Response(data={"message": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-            for data in order_detail:
-                if not (int(data.get('quantity')) > 0):
-                    return Response(data={"message": "Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
             self.instance = serializer.save()
             total = 0
-            # print(self.instance.id)
             for data in order_detail:
-                try:
-                    variant = Variant.objects.get(id=data.get('variant'))
-                except:
-                    return Response(data={"detail": "Variant not found"}, status=status.HTTP_404_NOT_FOUND)
-
+                variant = Variant.objects.get(id=data.get(
+                    'variant'), status=True, deleted_by=None)
                 if variant.sale:
                     price = variant.sale
                     total += int(variant.sale) * int(data.get('quantity'))
@@ -69,27 +67,16 @@ class OrderDetailApiView(generics.RetrieveUpdateAPIView):
     queryset = Order.objects.all().prefetch_related()
     lookup_url_kwarg = "order_id"
 
-    # def update(self, request, *args, **kwargs):
-    #     response = super().update(request, *args, **kwargs)
-
-    # def get_serializer(self, *args, **kwargs):
-    #     if(self.request.method == "PUT"):
-    #         return super().get_serializer(*args, **kwargs)
-    #     return OrderSerializer(*args, **kwargs)
-
     def update(self, request, *args, **kwargs):
-        try:
-            data = Order.objects.get(id=self.kwargs['order_id'])
-            if data.status == "processing":
-                serializer = self.get_serializer(
-                    data, data=request.data, partial=True)
-                serializer.is_valid(raise_exception=True)
-                self.perform_update(serializer)
-                return Response(data=serializer.data)
-            else:
-                return Response(data={"message": "Not Update!"}, status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return Response(data={"detail": "Not Found Order!"}, status=status.HTTP_404_NOT_FOUND)
+        data = get_object_or_404(Order, id=self.kwargs['order_id'])
+        if data.status == "processing":
+            serializer = self.get_serializer(
+                data, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(data=serializer.data)
+        else:
+            return Response(data={"message": "Not Update!"}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

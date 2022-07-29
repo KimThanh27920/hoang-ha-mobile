@@ -1,10 +1,13 @@
-from .. import models
 from rest_framework import serializers
+
 from variants.models import Variant
+from .. import models
+
 
 class ShortInfoProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField(max_length=255)
+    
     
 class ReadVarianSerializer(serializers.ModelSerializer):
     product = ShortInfoProductSerializer()
@@ -18,6 +21,8 @@ class ReadVarianSerializer(serializers.ModelSerializer):
             "version",
             "price"
         ]
+        
+        
 class OrderDetailReadOnlySerializer(serializers.ModelSerializer):
     variant = ReadVarianSerializer(read_only = True )
     class Meta:
@@ -32,6 +37,7 @@ class OrderDetailReadOnlySerializer(serializers.ModelSerializer):
             'order': {'write_only': True},
         }
 
+
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderDetail
@@ -44,6 +50,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'order': {'write_only': True},
         }
+        
+        
 class OrderSerializer(serializers.ModelSerializer):
     order_details = OrderDetailReadOnlySerializer(many = True, read_only=True)
     class Meta:
@@ -60,7 +68,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'status',
             'order_details',
         ]
-        
+
+            
 class OrderReadSerializer(serializers.ModelSerializer):
     order_details = OrderDetailReadOnlySerializer(many = True, read_only=True)
     class Meta:

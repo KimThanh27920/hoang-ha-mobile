@@ -24,9 +24,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class ArticleRetrieveSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+    
+    tags = serializers.SerializerMethodField(method_name="get_tags")
     author = UserSerializer()
     updated_by = UserSerializer()
+
+    def get_tags(self, obj):
+        tags = obj.tags.filter(deleted_by=None)
+        serializer = TagSerializer(instance=tags, many=True)
+        return serializer.data
 
     class Meta:
         model = Article
@@ -70,13 +76,13 @@ class ArticleSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
-        validators = [
-            # TODO: @Bang: Article titles can be duplicate, we don't need this validator.
-            UniqueTogetherValidator(
-                queryset=Article.objects.filter(deleted_by=None),
-                fields=["title"]
-            )
-        ]
+        # validators = [
+        #     # TODO: @Bang: Article titles can be duplicate, we don't need this validator.
+        #     UniqueTogetherValidator(
+        #         queryset=Article.objects.filter(deleted_by=None),
+        #         fields=["title"]
+        #     )
+        # ]
 
     def to_representation(self, instance):
         limit_content = instance.content

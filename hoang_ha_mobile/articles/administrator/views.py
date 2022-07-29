@@ -3,17 +3,34 @@ from articles.models import Article
 from articles.administrator.permissions import IsOwner
 from articles.administrator.serializers import ArticleSerializer, ArticleRetrieveSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import permissions, filters
+from rest_framework import permissions
 from datetime import datetime
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-
+FIELDS = [
+            "id",
+            "title",
+            "description",
+            "viewers",
+            "status",
+            "content",
+            "created_at",
+            "author__email",
+            "author__phone",
+            "updated_by__email",
+            "updated_by__phone",
+            "updated_at"
+        ]
 class ArticleViewSet(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["title", "author__full_name", "description",
-                     "content", "updated_by__full_name", "created_at", "updated_at"]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = FIELDS
+    search_fields = FIELDS
+    filterset_fields = FIELDS
+    
 
     def get_queryset(self):
         if self.action == "retrieve":

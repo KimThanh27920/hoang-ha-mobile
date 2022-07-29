@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'tags',
     'carts',
     'categories',
+    'bases',
     'comments',
     'orders',
     'products',

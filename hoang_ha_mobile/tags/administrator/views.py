@@ -2,17 +2,31 @@ from rest_framework.viewsets import ModelViewSet
 from tags.models import Tag
 from tags.administrator.serializers import TagSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import permissions, filters
+from rest_framework import permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from datetime import datetime
 
-
+FIELDS = [
+            "id",
+            "name",
+            "status",
+            "created_by__email",
+            "created_by__phone",
+            "created_at",
+            "updated_by__email",
+            "updated_by__phone",
+            "updated_at"
+        ]
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.filter(deleted_by=None).prefetch_related()
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["name"]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = FIELDS
+    search_fields = FIELDS
+    filterset_fields = FIELDS
     serializer_class = TagSerializer
 
     def perform_create(self, serializer):
