@@ -1,8 +1,11 @@
+# Rest framework library
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from rest_framework.response import Response
+# Djangoo Filter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+# Simple JWT Authenication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
