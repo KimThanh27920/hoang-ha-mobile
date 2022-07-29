@@ -5,11 +5,29 @@ from ..models import Product
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+
 class ProductFavorite(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            "favorite"
+            "favorite",
         ]
+       
         
-        
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "name",
+        ]
+
+
+class ProductFavoriteListOwner(serializers.ModelSerializer):
+    favorites = ProductSerializer(many=True, read_only=True)
+    class Meta:
+        model = User
+        fields = [
+            "email",
+            "favorites"
+        ]
