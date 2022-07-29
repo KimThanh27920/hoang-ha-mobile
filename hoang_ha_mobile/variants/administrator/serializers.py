@@ -13,7 +13,6 @@ class ProductReadInVariantSerializer(serializers.ModelSerializer):
         fields =[
             'id',
             'name',
-            'description',
             'insurance',
             'category',
             'status',
@@ -82,8 +81,6 @@ class VariantSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_at',
             'updated_by',
-            'deleted_at',
-            'deleted_by',
         ]
 
 

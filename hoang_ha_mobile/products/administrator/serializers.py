@@ -33,7 +33,7 @@ class VariantReadInProductSerializer(serializers.ModelSerializer):
 class ProductReadSerializer(serializers.ModelSerializer):
     category = CategoryReadInProductSerializer(read_only =True )
     variants = serializers.SerializerMethodField()
-    total_rating = serializers.IntegerField()
+    favorites = serializers.IntegerField()
     class Meta:
         model = Product
         fields =[
@@ -44,7 +44,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'insurance',
             'variants',
             'status',
-            'total_rating',
+            'favorites',
             'created_at',
             'created_by',
             'updated_at',
@@ -73,8 +73,6 @@ class ProductSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_at',
             'updated_by',
-            'deleted_at',
-            'deleted_by',
         ]
 
 

@@ -24,9 +24,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         "delete": ProductSerializer
     }
 
-    queryset = Product.objects.exclude(deleted_at__isnull=False).prefetch_related(
-        'variants').select_related('category')
-    #queryset = Product.objects.all().prefetch_related('variants').select_related('category')
+    queryset = Product.objects.exclude(deleted_at__isnull=False).prefetch_related('variants').select_related('category').order_by('updated_at')
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
@@ -41,7 +39,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.method == "GET":
-            return super().get_queryset().annotate(total_rating=Count('favorite'))
+            return super().get_queryset().annotate(favorites=Count('favorite'))
         return super().get_queryset()
 
     def perform_create(self, serializer):

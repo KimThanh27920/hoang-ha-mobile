@@ -25,8 +25,7 @@ class VariantViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['product__name', 'color', 'version', 'front_cam',
-                     'camera', 'pin', 'screen', 'storage', 'size', 'price', 'sale', 'network']
+    search_fields = ['product__name']
     filterset_fields = ['product__name', 'status', 'color', 'version', 'front_cam',
                         'camera', 'pin', 'screen', 'storage', 'size', 'price', 'sale', 'network']
 
@@ -35,8 +34,8 @@ class VariantViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.method == 'GET':
-            return Variant.objects.exclude(deleted_at__isnull=False).select_related('product')
-        return Variant.objects.exclude(deleted_at__isnull=False)
+            return Variant.objects.exclude(deleted_at__isnull=False).select_related('product').order_by('updated_at')
+        return Variant.objects.exclude(deleted_at__isnull=False).order_by('updated_at')
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
