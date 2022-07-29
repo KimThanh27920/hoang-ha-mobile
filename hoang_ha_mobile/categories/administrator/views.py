@@ -36,6 +36,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(updated_by=self.request.user,
                         created_by=self.request.user)
+        
 
     def list(self, request, *args, **kwargs):
         # TODO: @all: in case we use a same generaal logic for all methods like LIST here. We should make BaseListView which contain a LIST method to reuse in all ones. Don't duplicate codes.

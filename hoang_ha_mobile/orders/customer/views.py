@@ -17,11 +17,15 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
         return super().get_queryset()    
     
     def post(self, request, *args, **kwargs):
-        serializer = serializers.OrderSerializer(data=request.data.get('order'))            
+        serializer = serializers.OrderSerializer(data=request.data.get('order'))   
+        array_order_detail = self.request.data.get("order_details")
+        temp = check_valid_item(array_order_detail)
+        if(temp is not None):
+            return temp
         if(serializer.is_valid()):            
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
-            array_order_detail = self.request.data.get("order_details")
+            
             # if(len(array_order_detail) < 1): 
             #     return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
             # for order_detail in array_order_detail:
