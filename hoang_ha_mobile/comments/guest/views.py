@@ -22,12 +22,8 @@ class ListCommentOfProductApiView(generics.ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-class ListRatingOfProductApiView(generics.ListCreateAPIView):
+class ListRatingOfProductApiView(ListCommentOfProductApiView):
     serializer_class = RatingSerializer
 
     def get_queryset(self):
         return Comment.objects.filter(~Q(rating=0), variant=self.request.query_params.get('variant'), parent=None, deleted_by=None)
-
-    def create(self, request, *args, **kwargs):
-        request.data['email'] = request.data.get('email').lower()
-        return super().create(request, *args, **kwargs)
