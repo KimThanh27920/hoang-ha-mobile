@@ -1,18 +1,27 @@
 from datetime import datetime
-from rest_framework.viewsets import ModelViewSet
+
 from comments.models import Comment
 from comments.administrator.serializers import CommentSerializer
-from rest_framework.permissions import IsAdminUser
+
 from comments.administrator.permissions import IsOwner, NotEditedForeignKey
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django_filters.rest_framework import DjangoFilterBackend
-class CommentViewSet(ModelViewSet):
+
+from bases.administrator.views import BaseModelViewSet
+
+FIELDS = [
+    "content",
+    "phone",
+    "name",
+    "email",
+    "rating",
+    "updated_at",
+    "created_at"
+]
+class CommentViewSet(BaseModelViewSet):
     queryset = Comment.objects.filter(deleted_by=None).select_related()
     serializer_class = CommentSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminUser]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["rating"]
+    ordering_fields = FIELDS
+    search_fields = FIELDS
+    filterset_fields = FIELDS
 
     def get_permissions(self):
         if self.action != 'update':
@@ -32,13 +41,6 @@ class CommentViewSet(ModelViewSet):
             email = self.request.user.email,
             phone = self.request.user.phone
         )
-
-    def perform_update(self, serializer):
-        serializer.save(updated_by = self.request.user)
-
-    def update(self, request, *args, **kwargs):
-        kwargs["partial"] = True
-        return super().update(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         instance.deleted_by = self.request.user 

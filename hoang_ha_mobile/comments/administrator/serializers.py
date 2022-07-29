@@ -47,7 +47,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "updated_by",
             "updated_at"
         ]
-        read_only_fields = ["name","email","phone", "parent","rating"]
+        read_only_fields = ["name","email","phone", "parent"]
 
     def get_type(self, obj):
         if obj.rating != 0:
