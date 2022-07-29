@@ -24,10 +24,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductFavoriteListOwner(serializers.ModelSerializer):
-    favorites = ProductSerializer(many=True, read_only=True)
     class Meta:
         model = User
         fields = [
-            "email",
             "favorites"
         ]
