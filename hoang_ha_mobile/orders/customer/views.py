@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt import authentication
 
 from variants.models import Variant
-from hoang_ha_mobile.base.errors import check_valid_item_card
+from hoang_ha_mobile.base.errors import check_valid_item
 
 from . import serializers
 from .. import models
@@ -19,7 +19,7 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = serializers.OrderSerializer(data=request.data.get('order'))   
         array_order_detail = self.request.data.get("order_details")
-        temp = check_valid_item_card(array_order_detail)
+        temp = check_valid_item(array_order_detail)
         if(temp is not None):
             return temp
         if(serializer.is_valid()):            
