@@ -35,7 +35,9 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             #         variant = Variant.objects.get(id=order_detail.get('variant'))
             #     except:
             #         return response.Response(data={"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-            
+            temp = check_valid_item(array_order_detail)
+            if(temp is not None):
+                return temp
             for order_detail in array_order_detail:       
                 variant = Variant.objects.get(id=order_detail.get('variant'))
                 if(variant.sale > 0):

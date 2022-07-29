@@ -1,5 +1,5 @@
 from unicodedata import category
-from rest_framework import filters, viewsets, permissions
+from rest_framework import viewsets, permissions
 from categories.administrator.serializers import CategorySerializer
 from categories.models import Category
 from rest_framework.response import Response
@@ -7,14 +7,28 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
 from products.administrator.views import ProductViewSet
 from products.models import Product
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
-
+FIELDS = [
+    "id",
+    "name",
+    "status",
+    "created_by__email",
+    "created_by__phone",
+    "created_at",
+    "updated_by__email",
+    "updated_by__phone",
+    "updated_at"
+]
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering_fields = FIELDS
+    search_fields = FIELDS
+    filterset_fields = FIELDS
 
     def get_queryset(self):
         return Category.objects.filter(deleted_by=None)
@@ -22,6 +36,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(updated_by=self.request.user,
                         created_by=self.request.user)
+        
 
     def list(self, request, *args, **kwargs):
         # TODO: @all: in case we use a same generaal logic for all methods like LIST here. We should make BaseListView which contain a LIST method to reuse in all ones. Don't duplicate codes.
