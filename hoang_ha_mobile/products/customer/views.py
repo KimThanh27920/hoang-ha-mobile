@@ -8,7 +8,7 @@ User = get_user_model()
 from . import serializers
 from ..models import Product
 
-
+#Note Post favorite
 class UpdateFavorite(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.ProductFavorite
     lookup_url_kwarg = 'product_id'
@@ -31,8 +31,7 @@ class UpdateFavorite(generics.RetrieveUpdateDestroyAPIView):
             }
         serializer = self.get_serializer(instance)
         return Response(data=data, status = status.HTTP_200_OK)
-  
-    
+      
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
