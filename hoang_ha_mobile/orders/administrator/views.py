@@ -6,14 +6,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 # Django imports
-from django.db.models import Sum,Count
+from django.db.models import Sum
 # Application imports
 from .serializers import OrderSerializer,OrderReadSerializer ,OrderRetrieveSerializer
 from orders.models import Order
 # Python import
 from datetime import datetime
 
-
+#OrderView
 class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = {
         "list": OrderReadSerializer,
