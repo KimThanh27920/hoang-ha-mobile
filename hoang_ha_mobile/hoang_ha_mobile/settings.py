@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'products',
     'variants',
     'rest_framework_simplejwt.token_blacklist',
+    'stripe'
 ]
 
 REST_FRAMEWORK = {

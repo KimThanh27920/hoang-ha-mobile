@@ -17,8 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+# from hoang_ha_mobile.base.services.payments.stripe import views 
 
 urlpatterns = [
+    # path('payments/', views.create_payment_intent),
+    # path('payments/save_stripe_info', views.save_stripe_info),
+    
     path('admin-site/', admin.site.urls),
 
     path('admin/accounts/', include('accounts.administrator.urls')),
@@ -56,4 +60,8 @@ urlpatterns = [
     path('admin/comments/', include('comments.administrator.urls')),
     path('customer/comments/', include('comments.customer.urls')),
     path('comments/', include('comments.guest.urls')),
+    
+    path('admin/payments/', include('payments.administrator.urls')),
+    path('customer/payments/', include('payments.customer.urls')),
+    path('payments/', include('payments.guest.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
