@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "full_name",
+           "full_name",
             "phone",
             "email",
             "birthday",
@@ -70,3 +70,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             'addresses',
             'image',
         ]
+
+
+class StripeAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StripeAccount
+        fields = [ "stripe_account"]

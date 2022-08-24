@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from base.services.webhook.views import stripe_webhook_view
+
 urlpatterns = [
     path('admin-site/', admin.site.urls),
 
@@ -56,4 +58,12 @@ urlpatterns = [
     path('admin/comments/', include('comments.administrator.urls')),
     path('customer/comments/', include('comments.customer.urls')),
     path('comments/', include('comments.guest.urls')),
+
+    path('admin/payments/', include('payments.administrator.urls')),
+    path('customer/payments/', include('payments.customer.urls')),
+    path('payments/', include('payments.guest.urls')),
+
+
+    path('webhook/',stripe_webhook_view),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

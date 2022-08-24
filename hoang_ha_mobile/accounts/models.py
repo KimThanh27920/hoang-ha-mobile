@@ -9,6 +9,7 @@ from django.contrib.auth.base_user import BaseUserManager
 # Create your models here.
 #custom user model
 
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -37,6 +38,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
     full_name = models.CharField(max_length=255)
@@ -60,6 +62,7 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+
 class Address(models.Model): #/api address google address autocomplete
     address = models.TextField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="addresses")
@@ -69,6 +72,13 @@ class Address(models.Model): #/api address google address autocomplete
     def __str__(self):
         return self.street
 
+
 class Pin(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     pin = models.IntegerField()
+
+
+class StripeAccount( models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    stripe_account = models.TextField(max_length=255)
+    

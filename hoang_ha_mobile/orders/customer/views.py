@@ -1,11 +1,10 @@
 from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt import authentication
-
 from variants.models import Variant
 from hoang_ha_mobile.base.errors import check_valid_item
-
 from . import serializers
 from .. import models
+
 
 class ListCreateOrderAPIView(generics.ListCreateAPIView):
     authentication_classes = [authentication.JWTAuthentication]
@@ -26,15 +25,6 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             self.instance = serializer.save(created_by=self.request.user)
             instance_price = 0
             
-            # if(len(array_order_detail) < 1): 
-            #     return response.Response(data={"Error": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
-            # for order_detail in array_order_detail:
-            #     if not (int(order_detail.get('quantity')) > 0): 
-            #         return response.Response(data={"Error: Invalid quantity"}, status=status.HTTP_400_BAD_REQUEST)
-            #     try:
-            #         variant = Variant.objects.get(id=order_detail.get('variant'))
-            #     except:
-            #         return response.Response(data={"detail": "Invalid data"}, status=status.HTTP_400_BAD_REQUEST)
             temp = check_valid_item(array_order_detail)
             if(temp is not None):
                 return temp
@@ -56,9 +46,10 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
                     serializer.save()
             self.instance.total = instance_price
             self.instance.save()
-            # print(self.instance)
-            # serializer = self.get_serializer(self.instance)
+           
             serializer = serializers.OrderSerializer(self.instance)
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+
+

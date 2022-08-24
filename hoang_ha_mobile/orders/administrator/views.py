@@ -22,11 +22,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         "delete": OrderSerializer
     }
     queryset = Order.objects.exclude(deleted_at__isnull=False).prefetch_related('order_details').order_by('created_at')
+    
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['email','status']
+    filterset_fields = ['email','status','paid']
     search_fields = ['email','shipping','status','delivery_address']
 
     def get_serializer_class(self):

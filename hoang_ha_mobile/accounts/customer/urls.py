@@ -8,4 +8,7 @@ urlpatterns = [
     path('profile/addresses/<int:address_id>/', views.AddressRetrieveDestroyUpdateAPIView.as_view(), name='update_retrieve_destroy_address'),
     path('profile/', views.ProfileUpdateRetrieveAPIView.as_view(), name='detail-profile'),
     path('profile/image/', views.UploadImageAPIView.as_view(), name='upload_image'),
+
+    path('profile/add-payment-method/',views.PaymentMethodCreateAPIView.as_view(), name="add-payment-method"),
+    path('profile/payment-method/',views.PaymentMethodListAPIView.as_view(), name="payment-method"),
 ]

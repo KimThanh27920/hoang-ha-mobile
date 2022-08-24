@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'products',
     'variants',
     'rest_framework_simplejwt.token_blacklist',
+    'payments',
 ]
 
 REST_FRAMEWORK = {
@@ -204,7 +205,11 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST')
 EMAIL_HOST_PASSWORD = os.getenv('PASSWORD_APP')
 
-# # Stripe
-# STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
-# STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
-#STRIPE_WEBHOOK_SECRET = ""
+# Stripe
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET_KEY')
+
+# Notifications 
+
+REGISTRATIONS = os.getenv('FIREBASE_REGISTRATION')
