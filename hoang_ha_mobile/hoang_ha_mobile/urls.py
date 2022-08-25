@@ -18,7 +18,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from base.services.webhook.views import stripe_webhook_view
+from base.services.webhook.webhook_service import stripe_webhook_view
+# from base.services.notifications.views import Firebase
 
 urlpatterns = [
     path('admin-site/', admin.site.urls),
@@ -67,4 +68,6 @@ urlpatterns = [
     path('webhook/',stripe_webhook_view),
     path('admin/transactions/', include('transactions.urls')),
     
+    # path('notifications/',Firebase.as_view() )
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

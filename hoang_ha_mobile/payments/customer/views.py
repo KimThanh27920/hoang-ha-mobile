@@ -3,12 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt import authentication
 
+from base.services.notifications.firebase_messaging import send_notification_with_firebase
+from base.services.stripe.stripe_api import StripeAPI
 from hoang_ha_mobile.base.errors import OrderCheckError
-from base.services.stripe.views import StripeAPI
 
-from orders.models import Order
 from accounts.models import StripeAccount
 from accounts.customer.serializers import StripeAccountSerializer
+from orders.models import Order
+
 
 
 # Checkout with Payment Intent
@@ -69,7 +71,8 @@ class PaymentIntentConfirmAPI(APIView):
             # update database
             if confirm.status == "succeeded":
                 Order.objects.filter(id = payment_intent.metadata['order_id']).update(paid=True)
-
+                mess = "You paid with order id "+ str(payment_intent.metadata['order_id'])
+                send_notification_with_firebase("Checkout successful",mess)
             return Response(data=confirm , status=status.HTTP_200_OK)
        
         else:

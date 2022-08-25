@@ -6,6 +6,7 @@ from transactions.models import Transaction
 
 User = get_user_model()
 
+#serializer for User in Transaction
 class UserReadInTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
