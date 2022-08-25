@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'variants',
     'rest_framework_simplejwt.token_blacklist',
     'payments',
+    'transactions',
 ]
 
 REST_FRAMEWORK = {

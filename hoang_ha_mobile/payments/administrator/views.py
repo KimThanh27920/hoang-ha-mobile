@@ -6,9 +6,7 @@ from rest_framework_simplejwt import authentication
 
 from hoang_ha_mobile.base.errors import OrderCheckError
 from base.services.stripe.views import StripeAPI
-
-
-
+from orders.models import Order
 
 
 
@@ -26,17 +24,20 @@ class RefundAPI(APIView):
         if order_exist is not None:
             return order_exist
         
-        # Check if your order has been refund
-        order_refund_yet = OrderCheckError.check_order_refund(order_id=order_id)
-        if order_refund_yet is not None:
-            return order_refund_yet
-        
         # Check if your order has not been paid
         order_paid_yet = OrderCheckError.check_order_paid_yet(order_id)
         if order_paid_yet is not None:
             return order_paid_yet
+            
+        # Check if your order has been refund
+        order_refund_yet = OrderCheckError.check_order_refund(order_id=order_id)
+        if order_refund_yet is not None:
+            return order_refund_yet
 
         refund = StripeAPI.refund(order_id)
+        if refund.status == "succeeded" :
+            Order.objects.filter(id = order_id).update(refund=True)
+
         return Response(data=refund, status=status.HTTP_200_OK)
        
         

@@ -4,6 +4,10 @@ from  django.http import HttpResponse
 
 from rest_framework.decorators import api_view
 import stripe
+from datetime import datetime
+from django.utils import timezone
+
+from transactions.views import create_transaction
 
 # @csrf_exempt
 @api_view(['POST'])
@@ -23,27 +27,35 @@ def stripe_webhook_view(request):
         # Invalid signature
         return HttpResponse(status=400)
 
+    session = None
     # Handle the event
-    if event['type'] == 'payment_intent.created':
+    if event['type'] == 'charge.succeeded':
         session = event['data']['object']
-        print("Payment intent are created")
+        type = "charge"
 
-    if event['type'] == 'payment_intent.processing':
+    if event['type'] == 'charge.refunded':
         session = event['data']['object']
-        print("Payment intent are processing")
-
-    if event['type'] == 'payment_intent.succeeded':
-        session = event['data']['object']
-        print("Payment intent are successed")
-
-    if event['type'] == 'payment_intent.payment_failed':
-        session = event['data']['object']
-        print("Payment intent are failed")
-
-    if event['type'] == 'payment_intent.canceled':
-        session = event['data']['object']
-        print("Payment intent are cancled")
+        type = "refund"
     
+    #add data into database
+    if session is not None:
+        print(session)
+        amount = session['amount']
+        if amount > 0 :
+            transaction = {
+                "datetime": timezone.now()  ,
+                "type": type, 
+                "amount":amount,
+                "currency": session['currency'],
+                "description": session['description'],
+                "order": session['metadata']['order_id'],
+                "payment_intent": session['payment_intent'], 
+                "customer": session['metadata']['user_id'],
+                "last4": session['payment_method_details']['card']['last4']
+            }
+            print(session['object'])
+            create_transaction(data=transaction)
+      
     # Passed signature verification
     return HttpResponse(status=200)
 

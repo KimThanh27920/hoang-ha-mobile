@@ -39,7 +39,7 @@ class StripeAPI:
         return stripe.PaymentMethod.list(customer=customer,type="card")
 
     # Create payment intent
-    def create_payment_intent(amount,currency, payment_method_types, order_id,customer_id = None ):
+    def create_payment_intent(amount,currency, payment_method_types, order_id,customer_id = None , user = None):
         if customer_id is not None:
             return stripe.PaymentIntent.create(
                 customer = customer_id,
@@ -48,6 +48,7 @@ class StripeAPI:
                 payment_method_types=payment_method_types,
                 metadata = {
                     "order_id": order_id,
+                    "user_id": user
                 })
         return stripe.PaymentIntent.create(
             amount = amount, 
@@ -55,6 +56,7 @@ class StripeAPI:
             payment_method_types=payment_method_types,
             metadata = {
                 "order_id": order_id,
+                "user_id": user
             })
     
     # Retrieve paymnent intent
@@ -98,9 +100,10 @@ class StripeAPI:
 
     # Refund 
     def refund(order_id):
-        data = stripe.PaymentIntent.search(query = "metadata['order_id']:'9'")
+        queryset = "metadata['order_id']:"+"'"+str(order_id)+"'"
+        print(queryset)
+        data = stripe.PaymentIntent.search(query = queryset )
         charge_id = data.data[0].charges.data[0].id
-        print(charge_id)
         return stripe.Refund.create(
             charge=charge_id,
             metadata = {

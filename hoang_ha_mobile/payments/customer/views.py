@@ -32,11 +32,14 @@ class PaymentIntentCreateAPI(APIView):
            
         # get customer id
         order = Order.objects.get(id=order_id)
-        if self.request.user.id is not None and StripeAccount.objects.filter(user=self.request.user.id).exists() :
-            stripe_obj = StripeAccount.objects.get(user=self.request.user.id)
-            stripe_account_serializer = StripeAccountSerializer(stripe_obj)
-            stripe_account = stripe_account_serializer.data["stripe_account"]
-            intent = StripeAPI.create_payment_intent(order.total,"vnd",payment_method_types, order_id,stripe_account)
+        if self.request.user.id is not None:
+            if StripeAccount.objects.filter(user=self.request.user.id).exists() :
+                stripe_obj = StripeAccount.objects.get(user=self.request.user.id)
+                stripe_account_serializer = StripeAccountSerializer(stripe_obj)
+                stripe_account = stripe_account_serializer.data["stripe_account"]
+                intent = StripeAPI.create_payment_intent(order.total,"vnd",payment_method_types, order_id,stripe_account,self.request.user.id)
+            else:
+                intent = StripeAPI.create_payment_intent(order.total,"vnd",payment_method_types, order_id,self.request.user.id)
         else:
             intent = StripeAPI.create_payment_intent(order.total,"vnd",payment_method_types, order_id)
         
@@ -58,7 +61,7 @@ class PaymentIntentConfirmAPI(APIView):
         isvalid_payment_method = OrderCheckError.check_valid_payment_method(user_id = self.request.user.id, payment_method=payment_method)
         if isvalid_payment_method is not None :
             return isvalid_payment_method
-
+       
         #check status to checkout
         if payment_intent.status == "requires_payment_method" or payment_intent.status == "requires_confirmation":
             confirm= StripeAPI.confirm_payment_intent(payment_intent_id,payment_method)

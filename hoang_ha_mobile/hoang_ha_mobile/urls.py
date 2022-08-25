@@ -65,5 +65,6 @@ urlpatterns = [
 
 
     path('webhook/',stripe_webhook_view),
+    path('admin/transactions/', include('transactions.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
