@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt import authentication
 
-from base.services.notifications.firebase_messaging import send_notification_with_firebase
+from base.services.notifications.firebase_messaging import Message,FCM
 from base.services.stripe.stripe_api import StripeAPI
 
 from hoang_ha_mobile.base.errors import OrderCheckError
@@ -38,9 +38,11 @@ class RefundAPI(APIView):
 
         refund = StripeAPI.refund(order_id)
         if refund.status == "succeeded" :
+            
             Order.objects.filter(id = order_id).update(refund=True)
-            mess = "You refund with order id "+str(order_id)
-            send_notification_with_firebase("Refund",mess)
+            mess = "You have refund with order id "+str(order_id)
+            # Message.send_notification_with_firebase("Refund",mess)
+            FCM.send_message_to("Checkout", mess)
 
         return Response(data=refund, status=status.HTTP_200_OK)
        

@@ -5,7 +5,7 @@ from orders.models import Order
 from variants.models import Variant
 from accounts.models import StripeAccount
 
-from base.services.stripe.views import StripeAPI
+from base.services.stripe.stripe_api import StripeAPI
 
 from django.db.models import Q
 

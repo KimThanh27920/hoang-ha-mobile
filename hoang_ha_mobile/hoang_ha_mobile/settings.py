@@ -13,6 +13,9 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+from firebase_admin import initialize_app
+from firebase_admin import credentials
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,6 +61,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'payments',
     'transactions',
+    'fcm_django',
 ]
 
 REST_FRAMEWORK = {
@@ -215,3 +219,19 @@ STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET_KEY')
 
 REGISTRATIONS = os.getenv('FIREBASE_REGISTRATION')
 DEVICES = os.getenv('DEVICE_REGISTRATION')
+
+#Setting Firebase Cloud Messaging API (V1)
+cred = credentials.Certificate("E:/INTERNS/hoang-ha-mobile/env/Lib/site-packages/servicesAccountkey/notification-for-hoang-ha-firebase-adminsdk-6qq9e-c14555a5e6.json")
+FIREBASE_APP = initialize_app(cred)
+
+FCM_DJANGO_SETTINGS = {
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "ONE_DEVICE_PER_USER": False,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": False,
+}

@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, response, status
 from rest_framework_simplejwt import authentication
 
-from base.services.notifications.firebase_messaging import send_notification_with_firebase
+from base.services.notifications.firebase_messaging import Message, FCM
 from hoang_ha_mobile.base.errors import check_valid_item
 
 from variants.models import Variant
@@ -52,8 +52,10 @@ class ListCreateOrderAPIView(generics.ListCreateAPIView):
             self.instance.save()
            
             serializer = serializers.OrderSerializer(self.instance)
-            
-            send_notification_with_firebase("Create Order","You have a new order!")
+
+            #Message.send_notification_with_firebase("Create Order","You have a new order!")
+            FCM.send_message_to("None Title", "Have a order")
+
             return response.Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return response.Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)

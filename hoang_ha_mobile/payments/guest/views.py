@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from base.services.notifications.firebase_messaging import send_notification_with_firebase
+from base.services.notifications.firebase_messaging import Message, FCM
 from base.services.stripe.stripe_api import StripeAPI
 from hoang_ha_mobile.base.errors import OrderCheckError
 
@@ -52,9 +52,10 @@ class SetupIntentConfirmAPI(APIView):
             
             if seti_confirm.status == "succeeded":
                 Order.objects.filter(id = seti_confirm.metadata['order_id']).update(paid=True)
-                mess = "You setup intent with order id "+str(seti_confirm.metadata['order_id'])
-                send_notification_with_firebase("Refund",mess)
-            
+                mess = "You have a transation with order id "+str(seti_confirm.metadata['order_id'])
+                # Message.send_notification_with_firebase("Refund",mess)
+                FCM.send_message_to("Checkout", mess)
+
             return Response(data=seti_confirm , status=status.HTTP_200_OK)
         else:
             status_payment = seti_confirm.status

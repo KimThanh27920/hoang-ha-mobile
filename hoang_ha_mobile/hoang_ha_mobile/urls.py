@@ -68,6 +68,6 @@ urlpatterns = [
     path('webhook/',stripe_webhook_view),
     path('admin/transactions/', include('transactions.urls')),
     
-    # path('notifications/',Firebase.as_view() )
+    path('fcm/',include('base.services.notifications.urls') ),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

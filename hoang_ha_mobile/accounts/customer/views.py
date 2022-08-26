@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 from .. import models
 from . import serializers
-from base.services.stripe.views import StripeAPI
+from base.services.stripe.stripe_api import StripeAPI
 
 
 
