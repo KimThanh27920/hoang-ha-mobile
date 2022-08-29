@@ -39,7 +39,6 @@ def stripe_webhook_view(request):
     
     #add data into database
     if session is not None:
-        print(session)
         amount = session['amount']
         if amount > 0 :
             transaction = {

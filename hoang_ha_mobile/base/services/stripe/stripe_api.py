@@ -13,7 +13,8 @@ class StripeAPI:
     
     #Create payment method
     def create_payment_method(number, exp_month, exp_year, cvc):
-        return stripe.PaymentMethod.create(
+        try :
+            pm = stripe.PaymentMethod.create(
                 type="card",
                 card={
                     "number":  number,
@@ -21,6 +22,10 @@ class StripeAPI:
                     "exp_year": exp_year,
                     "cvc": cvc,
                 },)
+        except stripe.error.CardError:
+               return False
+        
+        return pm          
 
     # Attach Payment method to a Customer
     def attach(stripe_payment, stripe_account):
@@ -32,7 +37,31 @@ class StripeAPI:
 
     # List payment method of user by customer
     def get_list_payment_method(stripe_account):
-        return stripe.Customer.list_payment_methods(stripe_account,type="card")
+        list_pm = stripe.Customer.list_payment_methods(stripe_account,type="card")
+        data = []
+        for pm in list_pm["data"] : 
+            if pm["customer"] is not None:
+                sub = {
+                    "id": pm["id"],
+                    "exp_month": pm["card"]["exp_month"],
+                    "exp_year" : pm["card"]["exp_year"],
+                    "last4": pm["card"]["last4"],
+                    "customer": pm["customer"]        
+                }
+            else :
+                sub = {
+                    "id": pm["id"],
+                    "exp_month": pm["exp_month"],
+                    "exp_year" : pm["exp_year"],
+                    "last4": pm["last4"],
+                    "customer": pm["customer"]        
+                }
+            
+            data.append(sub)
+
+        return data
+
+
 
     #List payment method by Payment Method
     def get_list_payment_method_by_pm(customer):
@@ -41,7 +70,7 @@ class StripeAPI:
     # Create payment intent
     def create_payment_intent(amount,currency, payment_method_types, order_id,customer_id = None , user = None):
         if customer_id is not None:
-            return stripe.PaymentIntent.create(
+            payment = stripe.PaymentIntent.create(
                 customer = customer_id,
                 amount = amount, 
                 currency = currency,
@@ -50,15 +79,26 @@ class StripeAPI:
                     "order_id": order_id,
                     "user_id": user
                 })
-        return stripe.PaymentIntent.create(
-            amount = amount, 
-            currency = currency,
-            payment_method_types=payment_method_types,
-            metadata = {
-                "order_id": order_id,
-                "user_id": user
-            })
-    
+        else :
+            paymnet = stripe.PaymentIntent.create(
+                amount = amount, 
+                currency = currency,
+                payment_method_types=payment_method_types,
+                metadata = {
+                    "order_id": order_id,
+                    "user_id": user
+                })
+        data = {
+            "id": payment["id"],
+            "client_secret": payment["client_secret"],
+            "amount": payment["amount"],
+            "currency": payment["currency"],
+            "payment_method_types": payment["payment_method_types"],
+            "status": payment["status"],
+            "metadata": payment["metadata"]
+
+        }
+        return data
     # Retrieve paymnent intent
     def retrieve_payment_intent(payment_intent):
         return stripe.PaymentIntent.retrieve(
@@ -67,22 +107,38 @@ class StripeAPI:
 
     # Confirm paymnent intent
     def confirm_payment_intent(payment_intent, payment_method):
-        return stripe.PaymentIntent.confirm(payment_intent,payment_method= payment_method)
+        payment = stripe.PaymentIntent.confirm(payment_intent,payment_method= payment_method)
+        data = {
+            "id": payment["id"],
+            "client_secret": payment["client_secret"],
+            "amount": payment["amount"],
+            "currency": payment["currency"],
+            "payment_method_types": payment["payment_method_types"],
+            "status": payment["status"],
+            "metadata": payment["metadata"],
+            "amount_received": payment["amount_received"],
+            "charges":{
+                "id": payment["charges"]["data"][0]["id"],
+                "amount": payment["charges"]["data"][0]["amount"],
+                "currency": payment["charges"]["data"][0]["currency"],
+                "paid": payment["charges"]["data"][0]["paid"],
+                "status": payment["charges"]["data"][0]["status"],
+
+            }
+
+        }
+        return data
 
     # setup intent
-    def setup_intent(payment_method_types,order_id,user_id = None):
+    def setup_intent(payment_method_types,user_id = None):
         if user_id is not None:
             return stripe.SetupIntent.create(
                 payment_method_types=payment_method_types,
                 metadata = {
                     "user_id": user_id,
-                    "order_id": order_id
                 })
         return stripe.SetupIntent.create(
-                payment_method_types=payment_method_types,
-                 metadata = {
-                    "order_id": order_id
-                }) 
+                payment_method_types=payment_method_types,) 
     
     #retrieve set up intent
     def retrieve_setup_intent(setup_intent):
@@ -101,12 +157,25 @@ class StripeAPI:
     # Refund 
     def refund(order_id):
         queryset = "metadata['order_id']:"+"'"+str(order_id)+"'"
-        print(queryset)
         data = stripe.PaymentIntent.search(query = queryset )
         charge_id = data.data[0].charges.data[0].id
-        return stripe.Refund.create(
-            charge=charge_id,
-            metadata = {
-                    "order_id": order_id
-                }
-            )
+        try:
+            refund = stripe.Refund.create(
+                charge=charge_id,
+                metadata = {
+                        "order_id": order_id
+                    }
+                )
+        except stripe.error.InvalidRequestError:
+               return False
+        
+        data = {
+            "id": refund["id"],
+            "amount": refund["amount"],
+            "currency": refund["currency"],
+            "charges": refund["charge"],
+            "status": refund["status"],
+            "metadata": refund["metadata"],
+
+        }
+        return data

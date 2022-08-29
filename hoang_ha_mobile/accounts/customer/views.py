@@ -107,7 +107,7 @@ class UploadImageAPIView(generics.UpdateAPIView):
 
 
 #Create Customer in Stripe and add Payment method
-class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin):
+class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin, mixins.DestroyModelMixin):
     
     serializer_class = serializers.StripeAccountSerializer
     authentication_classes = [authentication.JWTAuthentication]
@@ -130,7 +130,7 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
         if not models.StripeAccount.objects.filter(user=user).exists() :
             
             #Create a Customer
-            print("error")
+            
             stripe_account = StripeAPI.create_customer(customer_serializer.data['email'])
             data_stripe_account = {
                 "stripe_account" : stripe_account.id
@@ -157,7 +157,18 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
         StripeAPI.attach(stripe_payment,stripe_account)
         # List payment method 
         data = StripeAPI.get_list_payment_method(stripe_account)
+        
+        if data == False :
+            return Response(data={"message":"You have successfully paid"}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response(data=data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        payment_method_id = request.data["payment_method_id"]
+        StripeAPI.detach(payment_method_id)
+        return Response(data = {"message":" Delete card success! "},status=status.HTTP_200_OK)
+
+
 
 
 class PaymentMethodListAPIView(APIView):

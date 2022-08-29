@@ -32,7 +32,6 @@ class TransactionSerializerList(serializers.ModelSerializer):
             'order',
             'customer',
             'payment_intent', 
-            'last4',
         ]
 
 

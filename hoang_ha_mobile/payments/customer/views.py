@@ -1,7 +1,9 @@
+from msvcrt import SEM_NOOPENFILEERRORBOX
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt import authentication
+from rest_framework.permissions import IsAuthenticated
 
 from base.services.notifications.firebase_messaging import Message, FCM
 from base.services.stripe.stripe_api import StripeAPI
@@ -20,7 +22,7 @@ class PaymentIntentCreateAPI(APIView):
 
     def post(self,request):
         order_id = request.data["order_id"]
-        payment_method_types = request.data["payment_method_types"]
+        payment_method_types = [request.data["payment_method_types"]]
 
         # Check order exists
         order_exist = OrderCheckError.check_order_exists(order_id)
@@ -69,7 +71,7 @@ class PaymentIntentConfirmAPI(APIView):
             confirm= StripeAPI.confirm_payment_intent(payment_intent_id,payment_method)
             
             # update database
-            if confirm.status == "succeeded":
+            if confirm["status"] == "succeeded":
                 Order.objects.filter(id = payment_intent.metadata['order_id']).update(paid=True)
                 mess = "You have a transation with order id "+ str(payment_intent.metadata['order_id'])
                 
@@ -86,3 +88,103 @@ class PaymentIntentConfirmAPI(APIView):
                 "status_payment" : status_payment
             }
             return Response(data=message, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# Setup Intent 
+class SetupIntent(APIView):
+    
+    #authentication_classes = [authentication.JWTAuthentication]
+
+    def post(self, request):
+        
+        payment_method_types  = request.data['payment_method_types']
+
+        if self.request.user.id is not None:
+            setup_intent= StripeAPI.setup_intent(payment_method_types,user_id = self.request.user.id)
+            client_secret = {
+                "client_secret":setup_intent["client_secret"],
+                "customer": self.request.user.id
+                }
+            return Response(data=setup_intent , status=status.HTTP_200_OK)
+        
+        setup_intent = StripeAPI.setup_intent(payment_method_types)
+        client_secret = {"client_secret":setup_intent["client_secret"]}
+
+        return Response(data=client_secret , status=status.HTTP_200_OK)
+
+
+
+# Setup Intent 
+class SetupIntentConfirmAPI(APIView):
+    
+    # authentication_classes = [authentication.JWTAuthentication]
+    
+    def post(self, request):
+        seti=request.data["setup_intent_id"]
+        payment_method = request.data["payment_method"]
+        setup_intent = StripeAPI.retrieve_setup_intent(seti)
+        
+        if setup_intent.status == "requires_payment_method" or setup_intent.status == "requires_confirmation":
+            seti_confirm = StripeAPI.confirm_setup_intent(seti,payment_method=payment_method) 
+            
+            if seti_confirm.status == "succeeded":
+                Order.objects.filter(id = seti_confirm.metadata['order_id']).update(paid=True)
+                mess = "You have a transation with order id "+str(seti_confirm.metadata['order_id'])
+                # Message.send_notification_with_firebase("Refund",mess)
+                FCM.send_message_to("Checkout", mess)
+
+            return Response(data=seti_confirm , status=status.HTTP_200_OK)
+        else:
+            status_payment = seti_confirm.status
+            message ={
+                "message": "Can't checkout",
+                "status_payment" : status_payment
+            }
+            return Response(data=message, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Refund 
+class RefundAPI(APIView):
+    
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+    def post(self, request):
+        order_id  = request.data['order_id']
+
+        # Check order exists
+        order_exist = OrderCheckError.check_order_exists(order_id)
+        if order_exist is not None:
+            return order_exist
+        
+        # Check if your order has not been paid
+        order_paid_yet = OrderCheckError.check_order_paid_yet(order_id)
+        if order_paid_yet is not None:
+            return order_paid_yet
+            
+        # Check if your order has been refund
+        order_refund_yet = OrderCheckError.check_order_refund(order_id=order_id)
+        if order_refund_yet is not None:
+            return order_refund_yet
+
+        order_check_status = OrderCheckError.check_valid_order_refund(order_id)
+
+        if order_check_status is not None:
+            mess =  "You have a request refund with order id "+str(order_id) 
+            FCM.send_message_to("Refund",mess)
+            return order_check_status
+
+        refund = StripeAPI.refund(order_id)
+        if refund == False :
+            return Response(data={"message":"There is something wrong! Maybe you got a refund"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if refund["status"] == "succeeded" :
+            
+            Order.objects.filter(id = order_id).update(refund=True)
+            mess = "You have refund with order id "+str(order_id)
+            # Message.send_notification_with_firebase("Refund",mess)
+            FCM.send_message_to("Checkout", mess)
+
+        return Response(data=refund, status=status.HTTP_200_OK)

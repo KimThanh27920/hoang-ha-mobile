@@ -42,7 +42,7 @@ class TransactionListAPI(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
     serializer_class = TransactionSerializerList
-    queryset = Transaction.objects.all().order_by('-id')
+    queryset = Transaction.objects.all().order_by('-datetime')
     
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['order__id','customer__full_name','customer__email']

@@ -84,3 +84,8 @@ class OrderCheckError:
                     "message": "Can't checkout, because Your payment method is wrong !",
                     }
                 return response.Response(data=message, status=status.HTTP_400_BAD_REQUEST)
+    def check_valid_order_refund(order_id):
+        order = Order.objects.get(id=order_id)
+        if order.status != "processing" :
+            return response.Response(data={"message":" You can't refund! Please contact admin to send request refund"})
+             

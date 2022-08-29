@@ -61,8 +61,7 @@ urlpatterns = [
     path('comments/', include('comments.guest.urls')),
 
     path('admin/payments/', include('payments.administrator.urls')),
-    path('customer/payments/', include('payments.customer.urls')),
-    path('payments/', include('payments.guest.urls')),
+    path('payments/', include('payments.customer.urls')),
 
 
     path('webhook/',stripe_webhook_view),

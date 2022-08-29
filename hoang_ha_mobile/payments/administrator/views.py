@@ -4,12 +4,17 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework_simplejwt import authentication
 
+from django.core.mail import send_mail
+from django.conf import settings
+
+from_mail = settings.EMAIL_HOST_USER
+
 from base.services.notifications.firebase_messaging import Message,FCM
 from base.services.stripe.stripe_api import StripeAPI
 
+
 from hoang_ha_mobile.base.errors import OrderCheckError
 from orders.models import Order
-
 
 
 # Refund 
@@ -37,12 +42,23 @@ class RefundAPI(APIView):
             return order_refund_yet
 
         refund = StripeAPI.refund(order_id)
-        if refund.status == "succeeded" :
-            
+        
+        if refund == False :
+            return Response(data={"message":"There is something wrong! Maybe you got a refund"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if refund["status"] == "succeeded" :
+            order = Order.objects.get(id=order_id)
             Order.objects.filter(id = order_id).update(refund=True)
+            mess = "Your refund request has been accepted! The amount to be refunded is " + str(refund["amount"])+" "+ str(refund["currency"])+" for order "+ str(order_id)
+
+            send_mail(
+                "Refund Notifications",
+                mess,from_mail,
+                recipient_list=[str(order.email)]
+            )
             mess = "You have refund with order id "+str(order_id)
             # Message.send_notification_with_firebase("Refund",mess)
-            FCM.send_message_to("Checkout", mess)
+            FCM.send_message_to("Refund", mess)
 
         return Response(data=refund, status=status.HTTP_200_OK)
        
