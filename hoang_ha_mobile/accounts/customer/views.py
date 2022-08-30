@@ -119,10 +119,11 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
     
     def post(self, request):
         user = self.request.user.id
-        request.data['card_number'] = request.data.get('card_number')
-        request.data['exp_month'] = request.data.get('exp_month')
-        request.data['exp_year'] = request.data.get('exp_year')
-        request.data['cvc'] = request.data.get('cvc')
+        # request.data['card_number'] = request.data.get('card_number')
+        # request.data['exp_month'] = request.data.get('exp_month')
+        # request.data['exp_year'] = request.data.get('exp_year')
+        # request.data['cvc'] = request.data.get('cvc')
+        stripe_payment = request.data.get('payment_method_id')
 
         customer = models.CustomUser.objects.get(id=self.request.user.id)
         customer_serializer = serializers.UserSerializer(customer)
@@ -146,12 +147,12 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
             stripe_account = stripe_account_serializer.data["stripe_account"]
         
         # Create a Payment method
-        stripe_payment = StripeAPI.create_payment_method(
-            request.data['card_number'],
-            request.data['exp_month'],
-            request.data['exp_year'],
-            request.data['cvc']
-        )
+        # stripe_payment = StripeAPI.create_payment_method(
+        #     request.data['card_number'],
+        #     request.data['exp_month'],
+        #     request.data['exp_year'],
+        #     request.data['cvc']
+        # )
         
         # Attach Payment method to a Customer
         StripeAPI.attach(stripe_payment,stripe_account)

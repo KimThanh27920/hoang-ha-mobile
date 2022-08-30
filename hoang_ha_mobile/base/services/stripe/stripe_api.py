@@ -1,4 +1,5 @@
 
+from distutils.log import error
 from django.conf import settings
 import stripe
 
@@ -25,7 +26,7 @@ class StripeAPI:
         except stripe.error.CardError:
                return False
         
-        return pm          
+        return pm         
 
     # Attach Payment method to a Customer
     def attach(stripe_payment, stripe_account):
@@ -69,25 +70,36 @@ class StripeAPI:
 
     # Create payment intent
     def create_payment_intent(amount,currency, payment_method_types, order_id,customer_id = None , user = None):
-        if customer_id is not None:
-            payment = stripe.PaymentIntent.create(
-                customer = customer_id,
+        
+        if user is None:
+             payment = stripe.PaymentIntent.create(
+               
                 amount = amount, 
                 currency = currency,
                 payment_method_types=payment_method_types,
                 metadata = {
                     "order_id": order_id,
-                    "user_id": user
-                })
-        else :
-            paymnet = stripe.PaymentIntent.create(
-                amount = amount, 
-                currency = currency,
-                payment_method_types=payment_method_types,
-                metadata = {
-                    "order_id": order_id,
-                    "user_id": user
-                })
+                }) 
+        else: 
+            if customer_id is not None:
+                payment = stripe.PaymentIntent.create(
+                    customer = customer_id,
+                    amount = amount, 
+                    currency = currency,
+                    payment_method_types=payment_method_types,
+                    metadata = {
+                        "order_id": order_id,
+                        "user_id": user
+                    })
+            else :
+                payment = stripe.PaymentIntent.create(
+                    amount = amount, 
+                    currency = currency,
+                    payment_method_types=payment_method_types,
+                    metadata = {
+                        "order_id": order_id,
+                        "user_id": user
+                    })
         data = {
             "id": payment["id"],
             "client_secret": payment["client_secret"],
@@ -99,6 +111,7 @@ class StripeAPI:
 
         }
         return data
+   
     # Retrieve paymnent intent
     def retrieve_payment_intent(payment_intent):
         return stripe.PaymentIntent.retrieve(
@@ -107,27 +120,57 @@ class StripeAPI:
 
     # Confirm paymnent intent
     def confirm_payment_intent(payment_intent, payment_method):
-        payment = stripe.PaymentIntent.confirm(payment_intent,payment_method= payment_method)
-        data = {
-            "id": payment["id"],
-            "client_secret": payment["client_secret"],
-            "amount": payment["amount"],
-            "currency": payment["currency"],
-            "payment_method_types": payment["payment_method_types"],
-            "status": payment["status"],
-            "metadata": payment["metadata"],
-            "amount_received": payment["amount_received"],
-            "charges":{
-                "id": payment["charges"]["data"][0]["id"],
-                "amount": payment["charges"]["data"][0]["amount"],
-                "currency": payment["charges"]["data"][0]["currency"],
-                "paid": payment["charges"]["data"][0]["paid"],
-                "status": payment["charges"]["data"][0]["status"],
+        
+        try:
+            payment = stripe.PaymentIntent.confirm(payment_intent,payment_method= payment_method)
+        
+            data = {
+                "id": payment["id"],
+                "client_secret": payment["client_secret"],
+                "amount": payment["amount"],
+                "currency": payment["currency"],
+                "payment_method_types": payment["payment_method_types"],
+                "status": payment["status"],
+                "metadata": payment["metadata"],
+                "amount_received": payment["amount_received"],
+                "charges":{
+                    "id": payment["charges"]["data"][0]["id"],
+                    "amount": payment["charges"]["data"][0]["amount"],
+                    "currency": payment["charges"]["data"][0]["currency"],
+                    "paid": payment["charges"]["data"][0]["paid"],
+                    "status": payment["charges"]["data"][0]["status"],
+
+                }
 
             }
-
-        }
+        except stripe.error.CardError as e :
+            
+            error = {
+                "message": "Can't checkout! Because your card has insufficient funds",
+                "status" : False
+            }
+            return error
+        except stripe.error.InvalidRequestError as e:
+            error = {
+                "message": "The provided PaymentMethod was previously used with a PaymentIntent without Customer attachment, shared with a connected account without Customer attachment, or was detached from a Customer. It may not be used again. To use a PaymentMethod multiple times, you must attach it to a Customer first.",
+                "status" : False
+            }
+            return error
+        except stripe.error.APIConnectionError as e:
+            error = {
+                "message": "Network communication with Stripe failed",
+                "status" : False
+            }
+            return error
+        except Exception as e:
+            error = {
+                "message": "Somethings was wrong! "+str(e),
+                "status" : False
+            }
+            return error  
+        
         return data
+
 
     # setup intent
     def setup_intent(payment_method_types,user_id = None):
@@ -166,8 +209,9 @@ class StripeAPI:
                         "order_id": order_id
                     }
                 )
-        except stripe.error.InvalidRequestError:
-               return False
+        except Exception as e:
+            print(e)
+            return False
         
         data = {
             "id": refund["id"],
