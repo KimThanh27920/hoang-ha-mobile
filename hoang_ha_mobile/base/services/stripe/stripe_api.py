@@ -1,7 +1,9 @@
-
+import stripe
 from distutils.log import error
 from django.conf import settings
-import stripe
+
+from accounts.models import StripeAccount
+from accounts.models import CustomUser
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -44,16 +46,12 @@ class StripeAPI:
             if pm["customer"] is not None:
                 sub = {
                     "id": pm["id"],
-                    "exp_month": pm["card"]["exp_month"],
-                    "exp_year" : pm["card"]["exp_year"],
                     "last4": pm["card"]["last4"],
                     "customer": pm["customer"]        
                 }
             else :
                 sub = {
                     "id": pm["id"],
-                    "exp_month": pm["exp_month"],
-                    "exp_year" : pm["exp_year"],
                     "last4": pm["last4"],
                     "customer": pm["customer"]        
                 }
@@ -152,7 +150,7 @@ class StripeAPI:
             return error
         except stripe.error.InvalidRequestError as e:
             error = {
-                "message": "The provided PaymentMethod was previously used with a PaymentIntent without Customer attachment, shared with a connected account without Customer attachment, or was detached from a Customer. It may not be used again. To use a PaymentMethod multiple times, you must attach it to a Customer first.",
+                "message": "The provided PaymentMethod was previously used with PaymentIntent without Customer attachments. It may not be reused. Please reset Payment Method or login to attach PaymentMethod to customer",
                 "status" : False
             }
             return error
@@ -173,15 +171,26 @@ class StripeAPI:
 
 
     # setup intent
-    def setup_intent(payment_method_types,user_id = None):
+    def setup_intent(payment_method_types,user_id):
         if user_id is not None:
+            if StripeAccount.objects.filter(user=user_id).exists() :
+                stripe_obj = StripeAccount.objects.get(user=user_id)
+                stripe_account = stripe_obj.stripe_account
+            else:
+                user = CustomUser.objects.get(id =user_id)
+                email= user.email
+                stripe_account = stripe.Customer.create(
+                    email=email
+                )
+                StripeAccount.objects.create(user=user_id, stripe_account= stripe_account)
             return stripe.SetupIntent.create(
+                customer = stripe_account,
                 payment_method_types=payment_method_types,
                 metadata = {
                     "user_id": user_id,
                 })
-        return stripe.SetupIntent.create(
-                payment_method_types=payment_method_types,) 
+
+        return None
     
     #retrieve set up intent
     def retrieve_setup_intent(setup_intent):

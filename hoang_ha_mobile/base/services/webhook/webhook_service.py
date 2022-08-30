@@ -52,7 +52,7 @@ def stripe_webhook_view(request):
                 "customer": session['metadata']['user_id'],
                 "last4": session['payment_method_details']['card']['last4']
             }
-            print(session['object'])
+            # print(session['object'])
             create_transaction(data=transaction)
       
     # Passed signature verification

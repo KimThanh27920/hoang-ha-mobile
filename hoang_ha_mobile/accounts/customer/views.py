@@ -119,10 +119,7 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
     
     def post(self, request):
         user = self.request.user.id
-        # request.data['card_number'] = request.data.get('card_number')
-        # request.data['exp_month'] = request.data.get('exp_month')
-        # request.data['exp_year'] = request.data.get('exp_year')
-        # request.data['cvc'] = request.data.get('cvc')
+
         stripe_payment = request.data.get('payment_method_id')
 
         customer = models.CustomUser.objects.get(id=self.request.user.id)
@@ -131,7 +128,6 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
         if not models.StripeAccount.objects.filter(user=user).exists() :
             
             #Create a Customer
-            
             stripe_account = StripeAPI.create_customer(customer_serializer.data['email'])
             data_stripe_account = {
                 "stripe_account" : stripe_account.id
@@ -145,14 +141,6 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
             stripe_obj = models.StripeAccount.objects.get(user=self.request.user.id)
             stripe_account_serializer = serializers.StripeAccountSerializer(stripe_obj)
             stripe_account = stripe_account_serializer.data["stripe_account"]
-        
-        # Create a Payment method
-        # stripe_payment = StripeAPI.create_payment_method(
-        #     request.data['card_number'],
-        #     request.data['exp_month'],
-        #     request.data['exp_year'],
-        #     request.data['cvc']
-        # )
         
         # Attach Payment method to a Customer
         StripeAPI.attach(stripe_payment,stripe_account)
@@ -168,8 +156,6 @@ class PaymentMethodCreateAPIView(generics.GenericAPIView,mixins.CreateModelMixin
         payment_method_id = request.data["payment_method_id"]
         StripeAPI.detach(payment_method_id)
         return Response(data = {"message":" Delete card success! "},status=status.HTTP_200_OK)
-
-
 
 
 class PaymentMethodListAPIView(APIView):
@@ -189,6 +175,7 @@ class PaymentMethodListAPIView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
         return Response({},status=status.HTTP_204_NO_CONTENT)
+
 
 
         
